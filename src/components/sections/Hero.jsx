@@ -14,7 +14,7 @@ const Hero = () => {
             Hi, I'm <span className="gradient-text">Sailesh</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-             Full Stack Developer and AI Solution Architect 
+             Full Stack Developer and AI Solution Architect. 
           </p>
           <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
             I create modern, scalable web applications with clean code and exceptional user experiences.
