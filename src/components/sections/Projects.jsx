@@ -5,27 +5,37 @@ import { Button } from '../ui/button';
 
 const projects = [
   {
-    title: "Indoor Railway Navigation System",
-    description: "This is a wayfinding technology that uses digital maps, and mobile/display interfaces to guide passengers through complex railway stations, terminals.",
-    tech: ["React", "Node.js","Express", "Socket.io"],
-    image: "/images/project1-img.jpg",
-    github:"https://github.com/sailesh-codes/Railway-Navigation-project"
+    title: 'Code Craft',
+    description:
+      'Code Craft is a professional web service provider specializing in custom web development and software solutions to help businesses grow online.',
+    tech: ['Full Stack Development', 'Website', 'Software Solutions'],
+    image: '/images/projectcodecraft-img.png',
+    github: 'https://github.com/sailesh-codes/Code-Craft',
   },
   {
-    title: "Think Stack",
-    description: "Think Stack is an AI-powered quiz generator that creates dynamic and engaging quizzes based on user prompts.",
-    tech: ["React", "Express", "API", "MongoDb"],
-    image: "/images/project2-img.jpg",
-    github:"https://github.com/sailesh-codes/Think-Stack"
+    title: 'Indoor Railway Navigation System',
+    description:
+      'This is a wayfinding technology that uses digital maps, and mobile/display interfaces to guide passengers through complex railway stations, terminals.',
+    tech: ['React', 'Node.js', 'Express', 'Socket.io'],
+    image: '/images/project1-img.jpg',
+    github: 'https://github.com/sailesh-codes/Railway-Navigation-project',
   },
   {
-    title: "N8N Workflow",
-    description: "n8n is a visual workflow automation platform that connects apps, APIs, and AI services through nodes to create powerful automated workflows.",
-    tech: ["N8N", "Automation", "Workflow"],
-    image: "/images/project3-2-img.png",
-    github:"https://github.com/sailesh-codes/n8n-Workflows"
+    title: 'Think Stack',
+    description:
+      'Think Stack is an AI-powered quiz generator that creates dynamic and engaging quizzes based on user prompts.',
+    tech: ['React', 'Express', 'API', 'MongoDb'],
+    image: '/images/project2-img.jpg',
+    github: 'https://github.com/sailesh-codes/Think-Stack',
   },
-  
+  {
+    title: 'N8N Workflow',
+    description:
+      'n8n is a visual workflow automation platform that connects apps, APIs, and AI services through nodes to create powerful automated workflows.',
+    tech: ['N8N', 'Automation', 'Workflow'],
+    image: '/images/project3-2-img.png',
+    github: 'https://github.com/sailesh-codes/n8n-Workflows',
+  },
 ];
 
 const Projects = () => {
@@ -56,10 +66,11 @@ const Projects = () => {
               className="bg-card border rounded-xl p-6 card-hover flex flex-col"
             >
               <div className="mb-4">
-                <img 
+                <img
                   className="w-full h-48 object-contain rounded-lg mb-4 bg-black"
                   alt={`${project.title} preview`}
-                  src={project.image} />
+                  src={project.image}
+                />
               </div>
               <h3 className="text-xl font-bold mb-3">{project.title}</h3>
               <p className="text-muted-foreground mb-4 leading-relaxed flex-grow">
@@ -76,17 +87,34 @@ const Projects = () => {
                 ))}
               </div>
               <div className="flex gap-3 mt-auto">
-              <a href={project.github} target="_blank" rel="noopener noreferrer">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-                type="button"
-              >
-                <Github className="w-4 h-4" />
-                Code
-              </Button>
-            </a>
+                <a href={project.github} target="_blank" rel="noopener noreferrer">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    type="button"
+                  >
+                    <Github className="w-4 h-4" />
+                    Code
+                  </Button>
+                </a>
+                {project.title === 'Code Craft' && (
+                  <a
+                    href="https://code-craft-pied.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                      type="button"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Live Demo
+                    </Button>
+                  </a>
+                )}
               </div>
             </motion.div>
           ))}
