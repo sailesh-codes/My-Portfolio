@@ -5,6 +5,24 @@
 		<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 		<meta name="generator" content="Portfolio" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script>
+		  // Ensure dark mode is applied before React mounts to avoid flash of light theme
+		  (function () {
+		    try {
+		      var saved = localStorage.getItem('theme');
+		      if (saved) {
+		        if (saved === 'dark') document.documentElement.classList.add('dark');
+		        // if saved is 'light', leave as is
+		      } else {
+		        // Default to dark on first visit
+		        document.documentElement.classList.add('dark');
+		      }
+		    } catch (e) {
+		      // Fallback to dark if localStorage is unavailable
+		      document.documentElement.classList.add('dark');
+		    }
+		  })();
+		</script>
 		<title>Sailesh</title>
 	</head>
 	<body>
