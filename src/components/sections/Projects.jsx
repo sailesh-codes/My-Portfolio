@@ -8,7 +8,7 @@ const projects = [
     title: 'Code Craft',
     description:
       'Code Craft is a professional web service provider specializing in custom web development and software solutions to help businesses grow online.',
-    tech: ['Full Stack Development', 'Website', 'Software Solutions'],
+    tech: ['TypeScript', 'Next.js', 'Tailwind CSS'],
     image: '/images/projectcodecraft-img.png',
     github: 'https://github.com/sailesh-codes/Code-Craft',
   },
