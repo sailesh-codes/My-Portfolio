@@ -14,9 +14,9 @@ const Hero = () => {
             Hi, I'm <span className="gradient-text">Sailesh</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-             Full Stack Developer and AI Solution Architect. <br></br>
-             Creator and Founder of <a href="https://code-craft-pied.vercel.app/"><u>Code Craft</u></a>
-          </p>
+             Full Stack Developer and AI Solution Architect.</p> <br></br>
+             <h3>Creator and Founder of <a href="https://code-craft-pied.vercel.app/"><u>Code Craft</u></a></h3>
+          
           <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
             I create modern, scalable web applications with clean code and exceptional user experiences.
             Passionate about building solutions that make a difference.
