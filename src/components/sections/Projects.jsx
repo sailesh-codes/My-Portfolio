@@ -13,6 +13,14 @@ const projects = [
     github: 'https://github.com/sailesh-codes/Code-Craft',
   },
   {
+    title: 'MoviePedia',
+    description:
+      'MoviePedia is a movie database website that provides information about movies, including their titles',
+    tech: ['API', 'React', 'Tailwind CSS'],
+    image: '/images/projectMP-img.png',
+    github: 'https://github.com/sailesh-codes/MoviePedia',
+  },
+  {
     title: 'Indoor Railway Navigation System',
     description:
       'This is a wayfinding technology that uses digital maps, and mobile/display interfaces to guide passengers through complex railway stations, terminals.',
@@ -101,6 +109,23 @@ const Projects = () => {
                 {project.title === 'Code Craft' && (
                   <a
                     href="https://code-craft-pied.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                      type="button"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Live Demo
+                    </Button>
+                  </a>
+                )}
+                {project.title === 'MoviePedia' && (
+                  <a
+                    href="https://movie-pedia-navy.vercel.app/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
