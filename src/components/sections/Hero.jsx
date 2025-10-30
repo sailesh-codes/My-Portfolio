@@ -15,7 +15,7 @@ const Hero = () => {
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
              Full Stack Developer and AI Solution Architect.</p> <br></br>
-             <h3 className="text-lg text-muted-foreground">Creator and Founder of <a href="https://code-craft-pied.vercel.app/" className="text-purple-400 hover:underline">Code Craft</a></h3>
+             <h3 className="text-lg text-muted-foreground">Creator and Founder of <a href="https://www.codecraftnet.com/" className="text-purple-400 hover:underline">Code Craft</a></h3>
           
           <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
             I create modern, scalable web applications with clean code and exceptional user experiences.

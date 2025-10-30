@@ -108,7 +108,7 @@ const Projects = () => {
                 </a>
                 {project.title === 'Code Craft' && (
                   <a
-                    href="https://code-craft-pied.vercel.app/"
+                    href="https://www.codecraftnet.com/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
