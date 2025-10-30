@@ -4,8 +4,7 @@ import {
   Code, Database, Globe, Server, Route, FileCode, FileType, Palette,
   Network, GitBranch, Boxes, Settings, DatabaseBackup, Workflow
 } from 'lucide-react';
-import { SiTypescript } from 'react-icons/si';
-import { BrandSupabase } from 'tabler-icons-react';
+
 
 const skills = [
   { name: "React", icon: <Code className="w-5 h-5" /> },
@@ -14,14 +13,12 @@ const skills = [
   { name: "MongoDB", icon: <Database className="w-5 h-5" /> },
   { name: "MySQL", icon: <DatabaseBackup className="w-5 h-5" /> },
   { name: "JavaScript", icon: <FileCode className="w-5 h-5" /> },
-  { name: "TypeScript", icon: <SiTypescript className="w-5 h-5" /> },
   { name: "N8N", icon: <Workflow className="w-5 h-5" /> },
   { name: "Tailwind CSS", icon: <Palette className="w-5 h-5" /> },
   { name: "REST APIs", icon: <Network className="w-5 h-5" /> },
   { name: "Git", icon: <GitBranch className="w-5 h-5" /> },
   { name: "Docker", icon: <Boxes className="w-5 h-5" /> },
-  { name: "DevOps", icon: <Settings className="w-5 h-5" /> },
-  { name: "Supabase", icon: <BrandSupabase className="w-5 h-5" /> } 
+  { name: "DevOps", icon: <Settings className="w-5 h-5" /> }, 
 ];
 
 const Skills = () => {
