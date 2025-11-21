@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Toaster } from './components/ui/toaster';
 import Header from './components/layout/layout/Header';
+import MobileNav from './components/layout/MobileNav';
 import Hero from './components/sections/Hero';
 import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
@@ -83,6 +84,7 @@ function App() {
           <Footer />
         </div>
 
+        <MobileNav />
         <Toaster />
       </div>
     </>
