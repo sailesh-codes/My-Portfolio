@@ -13,6 +13,14 @@ const projects = [
     github: 'https://github.com/sailesh-codes/Code-Craft',
   },
   {
+    title: 'Echo AI',
+    description:
+      'Echo is a chatbot that can answer your questions and provide information about a wide range of topics.',
+    tech: ['TypeScript', 'API', 'Tailwind CSS'],
+    image: '/images/project_Echo.png',
+    github: 'https://github.com/sailesh-codes/ECHO-AI',
+  },
+  {
     title: 'MoviePedia',
     description:
       'MoviePedia is a movie database website that provides information about movies, including their titles',
@@ -121,7 +129,25 @@ const Projects = () => {
                       <ExternalLink className="w-4 h-4" />
                       Live Demo
                     </Button>
-                  </a>
+                  </a>  
+                )}
+
+                {project.title === 'Echo AI' && (
+                  <a
+                    href="https://echo-ai-one-xi.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                      type="button"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Live Demo
+                    </Button>
+                  </a>  
                 )}
                 {project.title === 'MoviePedia' && (
                   <a
