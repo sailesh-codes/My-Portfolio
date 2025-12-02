@@ -65,7 +65,7 @@ const Projects = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Featured Projects</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Featured Projects</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Here are some of my recent projects that showcase my skills and passion for development.
           </p>
@@ -77,19 +77,21 @@ const Projects = () => {
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -5 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-card border rounded-xl p-6 card-hover flex flex-col"
+              className="bg-card border rounded-xl p-6 card-hover flex flex-col relative"
             >
-              <div className="mb-4">
+              <div className="project-card-glow"></div>
+              <div className="mb-4 overflow-hidden rounded-lg">
                 <img
-                  className="w-full h-48 object-contain rounded-lg mb-4 bg-black"
+                  className="w-full h-48 object-contain rounded-lg mb-4 bg-black transition-transform duration-300"
                   alt={`${project.title} preview`}
                   src={project.image}
                 />
               </div>
-              <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed flex-grow">
+              <h3 className="text-xl font-bold mb-3 transition-colors duration-300 group-hover:text-primary">{project.title}</h3>
+              <p className="text-muted-foreground mb-4 leading-relaxed flex-grow transition-colors duration-300">
                 {project.description}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
@@ -107,7 +109,7 @@ const Projects = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
                     type="button"
                   >
                     <Github className="w-4 h-4" />
@@ -123,7 +125,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
                       type="button"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -141,7 +143,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
                       type="button"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -158,7 +160,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
                       type="button"
                     >
                       <ExternalLink className="w-4 h-4" />

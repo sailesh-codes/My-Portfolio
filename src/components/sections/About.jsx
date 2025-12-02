@@ -12,7 +12,7 @@ const About = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">About Me</h2>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">About Me</h2>
         </motion.div>
 
         <motion.div
