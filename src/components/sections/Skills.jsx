@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Code, Database, Globe, Server, Route, FileCode, FileType, Palette,
   Network, GitBranch, Boxes, Settings, DatabaseBackup, Workflow,
@@ -31,6 +31,21 @@ const skills = [
 ];
 
 const Skills = () => {
+  const [clickedCards, setClickedCards] = useState(new Set());
+
+  const handleCardClick = (index) => {
+    setClickedCards(prev => new Set(prev).add(index));
+    
+    // Remove card from clicked state after 1.5-2 seconds
+    setTimeout(() => {
+      setClickedCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(index);
+        return newSet;
+      });
+    }, 1500 + Math.random() * 500); // Random between 1.5-2 seconds
+  };
+
   return (
     <section id="skills" className="section-padding px-6">
       <div className="max-w-6xl mx-auto">
@@ -55,21 +70,61 @@ const Skills = () => {
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         >
           {skills.map((skill, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              viewport={{ once: true }}
-              className="skill-tag p-4 rounded-xl text-center cursor-pointer relative"
-            >
-              <div className="skill-glow"></div>
-              <div className="skill-icon flex items-center justify-center mb-2 text-purple-600 dark:text-purple-400">
-                {skill.icon}
-              </div>
-              <span className="skill-text font-medium">{skill.name}</span>
-            </motion.div>
+            <div key={index} className="relative">
+              {/* Explosion Dots */}
+              <AnimatePresence>
+                {clickedCards.has(index) && (
+                  <div className="absolute inset-0 pointer-events-none z-20">
+                    {[...Array(12)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-purple-400 rounded-full"
+                        style={{
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                        initial={{ scale: 0, opacity: 1 }}
+                        animate={{
+                          scale: [0, 1, 0],
+                          opacity: [1, 1, 0],
+                          x: Math.cos((i * 30 * Math.PI) / 180) * 60,
+                          y: Math.sin((i * 30 * Math.PI) / 180) * 60,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.8,
+                          ease: "easeOut"
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </AnimatePresence>
+
+              {/* Skill Card */}
+              <AnimatePresence mode="wait">
+                {!clickedCards.has(index) && (
+                  <motion.div
+                    key={`card-${index}`}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    viewport={{ once: true }}
+                    className="skill-tag p-4 rounded-xl text-center cursor-pointer relative"
+                    onClick={() => handleCardClick(index)}
+                  >
+                    <div className="skill-glow"></div>
+                    <div className="skill-icon flex items-center justify-center mb-2 text-purple-600 dark:text-purple-400">
+                      {skill.icon}
+                    </div>
+                    <span className="skill-text font-medium">{skill.name}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ))}
         </motion.div>
       </div>
