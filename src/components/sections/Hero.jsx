@@ -4,12 +4,12 @@ import { Code, Database, Globe, Zap, Palette, Server, Star, Sparkles } from 'luc
 
 const Hero = () => {
   const techButtons = [
-    { name: 'Frontend', icon: <Code className="w-4 h-4" />, color: 'from-purple-500 to-blue-500' },
-    { name: 'Backend', icon: <Server className="w-4 h-4" />, color: 'from-blue-500 to-purple-500' },
-    { name: 'Database', icon: <Database className="w-4 h-4" />, color: 'from-purple-500 to-pink-500' },
-    { name: 'UI/UX', icon: <Palette className="w-4 h-4" />, color: 'from-pink-500 to-purple-500' },
-    { name: 'API', icon: <Globe className="w-4 h-4" />, color: 'from-blue-500 to-cyan-500' },
-    { name: 'Performance', icon: <Zap className="w-4 h-4" />, color: 'from-yellow-500 to-orange-500' }
+    { name: 'Frontend', icon: <Code className="w-4 h-4" />, color: 'from-red-500 to-blue-500' },
+    { name: 'Backend', icon: <Server className="w-4 h-4" />, color: 'from-blue-500 to-orange-500' },
+    { name: 'Database', icon: <Database className="w-4 h-4" />, color: 'from-blue-500 to-red-500' },
+    { name: 'UI/UX', icon: <Palette className="w-4 h-4" />, color: 'from-orange-500 to-blue-600' },
+    { name: 'API', icon: <Globe className="w-4 h-4" />, color: 'from-pink-600 to-cyan-500' },
+    { name: 'Performance', icon: <Zap className="w-4 h-4" />, color: 'from-red-500 to-yellow-500' }
   ];
 
   return (
@@ -21,16 +21,7 @@ const Hero = () => {
           transition={{ duration: 0.8 }}
         >
           {/* Badge */}
-          <motion.div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Sparkles className="w-4 h-4" />
-            Available for Projects
-            <Star className="w-4 h-4" />
-          </motion.div>
+          
 
           <h1 className="text-5xl md:text-7xl font-bold mb-6 relative">
             Hi, I'm <span className="gradient-text">Sailesh</span>
@@ -49,7 +40,7 @@ const Hero = () => {
           </p>
           
           <h3 className="text-lg text-muted-foreground mb-6">
-            Creator and Founder of <a href="https://www.codecraftnet.com/" className="text-purple-400 hover:underline transition-colors">Code Craft</a>
+            Founder - <a href="https://www.codecraftnet.com/" className="text-purple-400 hover:underline transition-colors">Code Craft</a>
           </h3>
           
           <p className="text-lg text-muted-foreground mb-12 max-w-3xl mx-auto">
