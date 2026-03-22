@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Home, User, Briefcase, Wrench, Mail } from 'lucide-react';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,11 +8,11 @@ const MobileNav = () => {
   const menuRef = useRef(null);
 
   const navItems = [
-    { id: 'home', icon: '🏠', label: 'Home' },
-    { id: 'about', icon: '👤', label: 'About' },
-    { id: 'projects', icon: '💼', label: 'Projects' },
-    { id: 'skills', icon: '🛠️', label: 'Skills' },
-    { id: 'contact', icon: '📧', label: 'Contact' },
+    { id: 'home', icon: <Home className="w-6 h-6" />, label: 'Home' },
+    { id: 'about', icon: <User className="w-6 h-6" />, label: 'About' },
+    { id: 'projects', icon: <Briefcase className="w-6 h-6" />, label: 'Projects' },
+    { id: 'skills', icon: <Wrench className="w-6 h-6" />, label: 'Skills' },
+    { id: 'contact', icon: <Mail className="w-6 h-6" />, label: 'Contact' },
   ];
 
   const scrollToSection = (sectionId) => {
@@ -71,8 +71,8 @@ const MobileNav = () => {
                   : 'text-white/50 hover:text-white/80'
               }`}
             >
-              <span className="text-2xl">{item.icon}</span>
-              <span className="text-xs mt-1">{item.label}</span>
+              <span className="flex items-center justify-center mb-1">{item.icon}</span>
+              <span className="text-xs">{item.label}</span>
               {activeSection === item.id && (
                 <div className="w-1 h-1 bg-white rounded-full mt-1"></div>
               )}
