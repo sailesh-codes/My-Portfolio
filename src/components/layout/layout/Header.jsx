@@ -116,10 +116,19 @@ const Header = ({ activeSection }) => {
         variants={navVariants}
         initial="hidden"
         animate="visible"
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-background/80 backdrop-blur-sm shadow-md' : 'bg-transparent'}`}
+        className="fixed top-4 left-0 right-0 z-40 flex justify-end md:justify-center pointer-events-none px-4 md:px-0"
       >
-        <div className="max-w-6xl mx-auto px-6 h-20 flex justify-center md:justify-center items-center relative">
-          <nav className="hidden md:flex items-center space-x-8">
+        <div
+          className="pointer-events-auto px-4 md:px-8 py-2 md:py-0 md:h-[4.5rem] flex items-center gap-8 rounded-full"
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            boxShadow: '0 4px 32px rgba(0, 0, 0, 0.25)',
+          }}
+        >
+          <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <a
                 key={link.id}
@@ -128,31 +137,33 @@ const Header = ({ activeSection }) => {
                   e.preventDefault();
                   scrollToSection(link.id);
                 }}
-                className={`nav-link font-medium ${activeSection === link.id ? 'active text-primary' : 'text-foreground/80 hover:text-primary'}`}
+                className={`nav-link font-medium text-lg tracking-wide transition-colors ${
+                  activeSection === link.id
+                    ? 'active text-white'
+                    : 'text-white/60 hover:text-white'
+                }`}
               >
                 {link.title}
               </a>
             ))}
           </nav>
 
-          <div className="md:hidden absolute right-6">
-            <motion.button 
-              onClick={() => setIsOpen(!isOpen)} 
-              className="z-50 relative p-2 rounded-full hover:bg-accent/10 transition-colors"
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1 rounded-full text-white/70 hover:text-white transition-colors"
               variants={menuButtonVariants}
               initial="initial"
               whileTap="tap"
               aria-label="Toggle menu"
             >
-              {isOpen ? (
-                <X className="w-6 h-6 text-foreground" />
-              ) : (
-                <Menu className="w-6 h-6 text-foreground" />
-              )}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </motion.button>
           </div>
         </div>
       </motion.header>
+
 
       <AnimatePresence>
         {isOpen && (

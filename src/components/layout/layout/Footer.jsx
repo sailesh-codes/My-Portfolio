@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="py-8 px-6 border-t bg-card/50">
+    <footer className="pt-8 pb-24 md:pb-8 px-6 border-t bg-card/50">
       <div className="max-w-6xl mx-auto text-center">
         <p className="text-muted-foreground">
           © {new Date().getFullYear()} Sailesh. All rights reserved.<br/>

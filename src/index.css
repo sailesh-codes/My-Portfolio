@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --background: 0 0% 100%;
@@ -26,30 +24,29 @@
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  --background: 0 0% 0%;
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --card: 0 0% 3%;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: 0 0% 3%;
   --popover-foreground: 210 40% 98%;
   --primary: 262 83% 58%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 217.2 32.6% 17.5%;
+  --secondary: 0 0% 8%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
+  --muted: 0 0% 8%;
   --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
+  --accent: 0 0% 8%;
   --accent-foreground: 210 40% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
+  --border: 0 0% 12%;
+  --input: 0 0% 12%;
   --ring: 262 83% 58%;
 }
 
 * {
   border-color: hsl(var(--border));
-  cursor: none !important;
 }
 
 *::-webkit-scrollbar {
@@ -69,37 +66,7 @@
   background: rgba(139, 92, 246, 0.7);
 }
 
-.cursor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, #8b5cf6 0%, #3b82f6 50%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
-}
 
-.cursor-follower {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 50%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: transform 0.2s ease;
-}
-
-.cursor.clicking {
-  transform: translate(-50%, -50%) scale(0.8);
-}
-
-.cursor-follower.clicking {
-  transform: translate(-50%, -50%) scale(0.9);
-}
 
 body {
   background: #000000;
@@ -110,27 +77,9 @@ body {
   overflow-x: hidden;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: -50%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200%;
-  height: 150%;
-  background: radial-gradient(ellipse at center top, 
-    rgba(139, 92, 246, 0.15) 0%, 
-    rgba(59, 130, 246, 0.1) 30%, 
-    rgba(139, 92, 246, 0.05) 60%, 
-    transparent 100%);
-  z-index: 1;
-  pointer-events: none;
-  animation: lightPulse 8s ease-in-out infinite;
-}
-
-@keyframes lightPulse {
-  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+/* Force sections transparent so Galaxy shows through */
+section, main {
+  background: transparent !important;
 }
 
 .content-wrapper {

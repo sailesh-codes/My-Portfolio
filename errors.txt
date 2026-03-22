@@ -1,0 +1,16 @@
+﻿src/App.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/App.tsx(2,24): error TS7016: Could not find a declaration file for module 'react-helmet'. 'C:/THE ONE/Portfolio/node_modules/react-helmet/lib/Helmet.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-helmet` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-helmet';`
+src/App.tsx(4,25): error TS7016: Could not find a declaration file for module './components/ui/toaster'. 'C:/THE ONE/Portfolio/src/components/ui/toaster.jsx' implicitly has an 'any' type.
+src/App.tsx(5,20): error TS7016: Could not find a declaration file for module './components/layout/layout/Header'. 'C:/THE ONE/Portfolio/src/components/layout/layout/Header.jsx' implicitly has an 'any' type.
+src/App.tsx(6,23): error TS7016: Could not find a declaration file for module './components/layout/MobileNav'. 'C:/THE ONE/Portfolio/src/components/layout/MobileNav.jsx' implicitly has an 'any' type.
+src/App.tsx(7,18): error TS7016: Could not find a declaration file for module './components/sections/Hero'. 'C:/THE ONE/Portfolio/src/components/sections/Hero.jsx' implicitly has an 'any' type.
+src/App.tsx(8,22): error TS7016: Could not find a declaration file for module './components/sections/Projects'. 'C:/THE ONE/Portfolio/src/components/sections/Projects.jsx' implicitly has an 'any' type.
+src/App.tsx(9,20): error TS7016: Could not find a declaration file for module './components/sections/Skills'. 'C:/THE ONE/Portfolio/src/components/sections/Skills.jsx' implicitly has an 'any' type.
+src/App.tsx(10,19): error TS7016: Could not find a declaration file for module './components/sections/About'. 'C:/THE ONE/Portfolio/src/components/sections/About.jsx' implicitly has an 'any' type.
+src/App.tsx(11,21): error TS7016: Could not find a declaration file for module './components/sections/Contact'. 'C:/THE ONE/Portfolio/src/components/sections/Contact.jsx' implicitly has an 'any' type.
+src/App.tsx(12,20): error TS7016: Could not find a declaration file for module './components/layout/layout/Footer'. 'C:/THE ONE/Portfolio/src/components/layout/layout/Footer.jsx' implicitly has an 'any' type.
+src/App.tsx(45,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/terminal-demo.tsx(2,1): error TS6133: 'React' is declared but its value is never read.
+src/main.tsx(6,21): error TS2345: Argument of type 'HTMLElement | null' is not assignable to parameter of type 'Container'.
+  Type 'null' is not assignable to type 'Container'.

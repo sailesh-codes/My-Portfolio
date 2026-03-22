@@ -3,6 +3,30 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail ,BookOpen , PenTool , MessageSquare ,Bookmark} from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
+import { FloatingDock } from '../ui/floating-dock';
+
+const socialLinks = [
+  {
+    title: "Email",
+    icon: <Mail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    href: "mailto:saileshtrn06@gmail.com",
+  },
+  {
+    title: "GitHub",
+    icon: <Github className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    href: "https://github.com/sailesh-codes",
+  },
+  {
+    title: "LinkedIn",
+    icon: <Linkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    href: "https://www.linkedin.com/in/sailesh-t-955780323/",
+  },
+  {
+    title: "Blog",
+    icon: <MessageSquare className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    href: "https://codelogics.hashnode.dev/",
+  }
+];
 
 const Contact = () => {
   const handleContactSubmit = async (e) => {
@@ -38,8 +62,8 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="section-padding px-6">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="section-padding md:px-6">
+      <div className="max-w-4xl mx-auto w-[85%] md:w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -61,53 +85,8 @@ const Contact = () => {
             viewport={{ once: true }}
           >
             <h3 className="text-2xl font-bold mb-6">Let's Connect</h3>
-            <div className="space-y-4">
-              <a
-                href="mailto:saileshtrn06@gmail.com"
-                className="flex items-center gap-4 p-4 bg-card border rounded-lg hover:bg-accent transition-colors"
-              >
-                <Mail className="w-6 h-6 text-purple-600" />
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">saileshtrn06@gmail.com</p>
-                </div>
-              </a>
-              <a
-                href="https://github.com/sailesh-codes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 bg-card border rounded-lg hover:bg-accent transition-colors"
-              >
-                <Github className="w-6 h-6 text-purple-600" />
-                <div>
-                  <p className="font-medium">GitHub</p>
-                  <p className="text-muted-foreground">@sailesh-codes</p>
-                </div>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/sailesh-t-955780323/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 bg-card border rounded-lg hover:bg-accent transition-colors"
-              >
-                <Linkedin className="w-6 h-6 text-purple-600" />
-                <div>
-                  <p className="font-medium">LinkedIn</p>
-                  <p className="text-muted-foreground">@sailesh</p>
-                </div>
-              </a>
-              <a
-                href="https://codelogics.hashnode.dev/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 bg-card border rounded-lg hover:bg-accent transition-colors"
-              >
-                <MessageSquare className="w-6 h-6 text-purple-600" />
-                <div>
-                  <p className="font-medium">Blog</p>
-                  <p className="text-muted-foreground">@code logics</p>
-                </div>
-              </a>
+            <div className="flex items-center justify-start w-full py-8">
+              <FloatingDock mobileClassName="translate-y-0" desktopClassName="ml-0 mx-0" items={socialLinks} />
             </div>
           </motion.div>
 
@@ -161,7 +140,7 @@ const Contact = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:scale-105"
+                className="w-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] text-white font-semibold h-12 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
               >
                 Send Message
               </Button>

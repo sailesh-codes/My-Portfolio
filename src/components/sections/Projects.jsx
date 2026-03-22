@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, ExternalLink } from 'lucide-react';
 import { Button } from '../ui/button';
+import { Timeline } from '../ui/timeline';
 
 const projects = [
   {
@@ -10,39 +11,39 @@ const projects = [
       'Code Craft is a professional web service provider specializing in custom web development and software solutions to help businesses grow online.',
     tech: ['TypeScript', 'Next.js', 'Tailwind CSS'],
     image: '/images/projectcodecraft-img.png',
-    github: 'https://github.com/sailesh-codes/Code-Craft',
+    github: 'https://www.codecraftnet.com/',
+  },
+  {
+    title: 'Megasifi',
+    description:
+      'Megasifi is a modern e-commerce platform offering a vareity of stylish collection',
+    tech: ['TypeScript', 'API', 'Tailwind CSS'],
+    image: '/images/megasifi.jpeg',
+    github: 'https://megasifi.shop/',
+  },
+  {
+    title: 'Studio6 Interiors',
+    description:
+      'Studio6 Interiors creates elegant, functional home and office interiors tailored to your style.',
+    tech: ['API', 'React', 'Tailwind CSS'],
+    image: '/images/studio6.jpeg',
+    github: 'https://www.studio6interiors.in/',
+  },
+  {
+    title: 'CottonCandy Designs',
+    description:
+      'CottonCandy Designs is a creative studio specializing in branding, poster designing, and etc.',
+    tech: ['React', 'Node.js', 'Express',],
+    image: '/images/CottonCandyDesings.jpeg',
+    github: 'https://www.cottoncandydesigns.in/',
   },
   {
     title: 'Echo AI',
     description:
-      'Echo is a chatbot that can answer your questions and provide information about a wide range of topics.',
-    tech: ['TypeScript', 'API', 'Tailwind CSS'],
+      'Echo AI is a conversational AI assistant designed for productivity.',
+    tech: ['React', 'Express', 'API'],
     image: '/images/project_Echo.png',
-    github: 'https://github.com/sailesh-codes/ECHO-AI',
-  },
-  {
-    title: 'MoviePedia',
-    description:
-      'MoviePedia is a movie database website that provides information about movies, including their titles',
-    tech: ['API', 'React', 'Tailwind CSS'],
-    image: '/images/projectMP-img.png',
-    github: 'https://github.com/sailesh-codes/MoviePedia',
-  },
-  {
-    title: 'Indoor Railway Navigation System',
-    description:
-      'This is a wayfinding technology that uses digital maps, and mobile/display interfaces to guide passengers through complex railway stations, terminals.',
-    tech: ['React', 'Node.js', 'Express', 'Socket.io'],
-    image: '/images/project1-img.jpg',
-    github: 'https://github.com/sailesh-codes/Railway-Navigation-project',
-  },
-  {
-    title: 'Think Stack',
-    description:
-      'Think Stack is an AI-powered quiz generator that creates dynamic and engaging quizzes based on user prompts.',
-    tech: ['React', 'Express', 'API', 'MongoDb'],
-    image: '/images/project2-img.jpg',
-    github: 'https://github.com/sailesh-codes/Think-Stack',
+    github: 'https://echo-ai-one-xi.vercel.app/',
   },
   {
     title: 'N8N Workflow',
@@ -55,124 +56,67 @@ const projects = [
 ];
 
 const Projects = () => {
-  return (
-    <section id="projects" className="section-padding px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Featured Projects</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Here are some of my recent projects that showcase my skills and passion for development.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="bg-card border rounded-xl p-6 card-hover flex flex-col relative"
+  const timelineData = projects.map((project, index) => ({
+    title: project.title,
+    content: (
+      <div className="bg-card w-full overflow-hidden relative border rounded-xl p-6 shadow-sm group">
+        <div className="project-card-glow"></div>
+        <div className="mb-4 overflow-hidden rounded-lg bg-black flex items-center justify-center">
+          <img
+            className="w-full h-auto max-h-[350px] object-contain rounded-lg bg-black transition-transform duration-300 group-hover:scale-105"
+            alt={`${project.title} preview`}
+            src={project.image}
+          />
+        </div>
+        <p className="text-muted-foreground mb-4 leading-relaxed">
+          {project.description}
+        </p>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {project.tech.map((tech, techIndex) => (
+            <span
+              key={techIndex}
+              className="skill-tag px-3 py-1 rounded-full text-sm font-medium"
             >
-              <div className="project-card-glow"></div>
-              <div className="mb-4 overflow-hidden rounded-lg">
-                <img
-                  className="w-full h-48 object-contain rounded-lg mb-4 bg-black transition-transform duration-300"
-                  alt={`${project.title} preview`}
-                  src={project.image}
-                />
-              </div>
-              <h3 className="text-xl font-bold mb-3 transition-colors duration-300 group-hover:text-primary">{project.title}</h3>
-              <p className="text-muted-foreground mb-4 leading-relaxed flex-grow transition-colors duration-300">
-                {project.description}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tech.map((tech, techIndex) => (
-                  <span
-                    key={techIndex}
-                    className="skill-tag px-3 py-1 rounded-full text-sm font-medium"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-              <div className="flex gap-3 mt-auto">
-                <a href={project.github} target="_blank" rel="noopener noreferrer">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
-                    type="button"
-                  >
-                    <Github className="w-4 h-4" />
-                    Code
-                  </Button>
-                </a>
-                {project.title === 'Code Craft' && (
-                  <a
-                    href="https://www.codecraftnet.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
-                      type="button"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Live Demo
-                    </Button>
-                  </a>  
-                )}
-
-                {project.title === 'Echo AI' && (
-                  <a
-                    href="https://echo-ai-one-xi.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
-                      type="button"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Live Demo
-                    </Button>
-                  </a>  
-                )}
-                {project.title === 'MoviePedia' && (
-                  <a
-                    href="https://movie-pedia-navy.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 transition-all duration-50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
-                      type="button"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      Live Demo
-                    </Button>
-                  </a>
-                )}
-              </div>
-            </motion.div>
+              {tech}
+            </span>
           ))}
         </div>
+        <div className="flex flex-wrap gap-3 mt-auto">
+          {/* Live Demo button for all cards */}
+          <a href={project.demo || project.github || '#'} target="_blank" rel="noopener noreferrer">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105"
+              type="button"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Live Demo
+            </Button>
+          </a>
+
+          {/* Code button strictly for the last card */}
+          {index === projects.length - 1 && (
+            <a href={project.github || '#'} target="_blank" rel="noopener noreferrer">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105"
+                type="button"
+              >
+                <Github className="w-4 h-4" />
+                Code
+              </Button>
+            </a>
+          )}
+        </div>
       </div>
+    ),
+  }));
+
+  return (
+    <section id="projects" className="w-full relative">
+      <Timeline data={timelineData} />
     </section>
   );
 };
