@@ -256,8 +256,8 @@ const tokenColors: Record<TokenType, string> = {
   default: "text-neutral-300",
 };
 
-function SyntaxHighlightedText({ text }: { text: string }) {
-  const tokens = tokenizeBash(text);
+const SyntaxHighlightedText = React.memo(({ text }: { text: string }) => {
+  const tokens = useMemo(() => tokenizeBash(text), [text]);
 
   return (
     <>
@@ -268,7 +268,9 @@ function SyntaxHighlightedText({ text }: { text: string }) {
       ))}
     </>
   );
-}
+});
+
+SyntaxHighlightedText.displayName = "SyntaxHighlightedText";
 
 interface TerminalLine {
   type: "command" | "output";

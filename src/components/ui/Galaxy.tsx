@@ -14,7 +14,7 @@ void main() {
 `;
 
 const fragmentShader = `
-precision highp float;
+precision mediump float;
 
 uniform float uTime;
 uniform vec3 uResolution;
@@ -34,10 +34,10 @@ uniform float uRepulsionStrength;
 uniform float uMouseActiveFactor;
 uniform float uAutoCenterRepulsion;
 uniform bool uTransparent;
+uniform float uLayers;
 
 varying vec2 vUv;
 
-#define NUM_LAYER 4.0
 #define STAR_COLOR_CUTOFF 0.2
 #define MAT45 mat2(0.7071, -0.7071, 0.7071, 0.7071)
 #define PERIOD 3.0
@@ -151,8 +151,10 @@ void main() {
 
   vec3 col = vec3(0.0);
 
-  for (float i = 0.0; i < 1.0; i += 1.0 / NUM_LAYER) {
-    float depth = fract(i + uStarSpeed * uSpeed);
+  // Use a fixed max loop and multiply by factor for performance
+  for (float i = 0.0; i < 4.0; i++) {
+    if (i >= uLayers) break;
+    float depth = fract(i / 4.0 + uStarSpeed * uSpeed);
     float scale = mix(20.0 * uDensity, 0.5 * uDensity, depth);
     float fade = depth * smoothstep(1.0, 0.9, depth);
     col += StarLayer(uv * scale + i * 453.32) * fade;
@@ -217,7 +219,17 @@ export default function Galaxy({
   useEffect(() => {
     if (!ctnDom.current) return;
     const ctn = ctnDom.current;
-    const renderer = new Renderer({ alpha: transparent, premultipliedAlpha: false });
+    
+    // Performance detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2); // Cap resolution
+    
+    const renderer = new Renderer({ 
+      alpha: transparent, 
+      premultipliedAlpha: false,
+      antialias: !isMobile,
+      powerPreference: 'high-performance'
+    });
     const gl = renderer.gl;
 
     if (transparent) {
@@ -231,7 +243,17 @@ export default function Galaxy({
     let program: Program;
 
     function resize() {
-      renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
+      const width = ctn.offsetWidth;
+      const height = ctn.offsetHeight;
+      
+      // Scale down resolution on mobile for performance
+      const scale = isMobile ? 0.75 : 1.0; 
+      renderer.setSize(width * scale, height * scale);
+      
+      // Fix visual scaling
+      gl.canvas.style.width = `${width}px`;
+      gl.canvas.style.height = `${height}px`;
+
       if (program) {
         program.uniforms.uResolution.value = new Color(
           gl.canvas.width,
@@ -268,6 +290,7 @@ export default function Galaxy({
         uMouseActiveFactor: { value: 0.0 },
         uAutoCenterRepulsion: { value: autoCenterRepulsion },
         uTransparent: { value: transparent },
+        uLayers: { value: isMobile ? 2.0 : 4.0 }, // Fewer layers on mobile
       },
     });
 
@@ -295,13 +318,10 @@ export default function Galaxy({
     animateId = requestAnimationFrame(update);
 
     // Append canvas
-    gl.canvas.style.width = '100%';
-    gl.canvas.style.height = '100%';
     ctn.appendChild(gl.canvas);
 
     function handleMouseMove(e: MouseEvent) {
       if (globalMouse) {
-        // Use viewport-relative coords so it works even when covered by other elements
         targetMousePos.current = {
           x: e.clientX / window.innerWidth,
           y: 1.0 - e.clientY / window.innerHeight,
@@ -315,6 +335,26 @@ export default function Galaxy({
       }
       targetMouseActive.current = 1.0;
     }
+    
+    function handleTouchMove(e: TouchEvent) {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (globalMouse) {
+          targetMousePos.current = {
+            x: touch.clientX / window.innerWidth,
+            y: 1.0 - touch.clientY / window.innerHeight,
+          };
+        } else {
+          const rect = ctn.getBoundingClientRect();
+          targetMousePos.current = {
+            x: (touch.clientX - rect.left) / rect.width,
+            y: 1.0 - (touch.clientY - rect.top) / rect.height,
+          };
+        }
+        targetMouseActive.current = 1.0;
+      }
+    }
+
     function handleMouseLeave() {
       targetMouseActive.current = 0.0;
     }
@@ -322,7 +362,11 @@ export default function Galaxy({
     if (mouseInteraction) {
       const target = globalMouse ? window : ctn;
       target.addEventListener('mousemove', handleMouseMove as EventListener);
-      if (!globalMouse) ctn.addEventListener('mouseleave', handleMouseLeave);
+      target.addEventListener('touchmove', handleTouchMove as EventListener, { passive: true });
+      if (!globalMouse) {
+        ctn.addEventListener('mouseleave', handleMouseLeave);
+        ctn.addEventListener('touchend', handleMouseLeave);
+      }
     }
 
     return () => {
@@ -331,7 +375,11 @@ export default function Galaxy({
       if (mouseInteraction) {
         const target = globalMouse ? window : ctn;
         target.removeEventListener('mousemove', handleMouseMove as EventListener);
-        if (!globalMouse) ctn.removeEventListener('mouseleave', handleMouseLeave);
+        target.removeEventListener('touchmove', handleTouchMove as EventListener);
+        if (!globalMouse) {
+          ctn.removeEventListener('mouseleave', handleMouseLeave);
+          ctn.removeEventListener('touchend', handleMouseLeave);
+        }
       }
       if (ctn.contains(gl.canvas)) ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();

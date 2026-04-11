@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { motion } from 'framer-motion';
 import { Toaster } from './components/ui/toaster';
 import Header from './components/layout/layout/Header';
 import MobileNav from './components/layout/MobileNav';
@@ -8,16 +7,13 @@ import Hero from './components/sections/Hero';
 import Projects from './components/sections/Projects';
 import Skills from './components/sections/Skills';
 import About from './components/sections/About';
-import Contact from './components/sections/Contact';
-import Footer from './components/layout/layout/Footer';
+import Contact from './components/sections/Contact.tsx';
 import Galaxy from './components/ui/Galaxy';
 import CTA from './components/sections/CTA';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [isMobile, setIsMobile] = useState(false);
-
-
 
   useEffect(() => {
     // Check if device is mobile/touch
@@ -33,26 +29,33 @@ function App() {
     return () => {
       window.removeEventListener('resize', checkMobile);
     };
-  }, [isMobile]);
+  }, []); // Only run on mount
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const sections = ['home', 'about', 'projects', 'skills', 'contact'];
-      const scrollPosition = window.scrollY + 100;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sections = ['home', 'about', 'projects', 'skills', 'contact'];
+          const scrollPosition = window.scrollY + 100;
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
+          for (const section of sections) {
+            const element = document.getElementById(section) as HTMLElement | null;
+            if (element) {
+              const { offsetTop, offsetHeight } = element;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+                setActiveSection(section);
+                break;
+              }
+            }
           }
-        }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -96,7 +99,6 @@ function App() {
             <CTA />
             <Contact />
           </main>
-          <Footer />
         </div>
         
         <MobileNav />

@@ -79,7 +79,9 @@ body {
 
 /* Force sections transparent so Galaxy shows through */
 section, main {
-  background: transparent !important;
+  background: transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
 }
 
 .content-wrapper {
@@ -100,6 +102,7 @@ section, main {
               border-color 0.05s ease;
   position: relative;
   overflow: hidden;
+  will-change: transform, box-shadow;
 }
 
 .card-hover::before {
