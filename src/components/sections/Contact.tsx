@@ -1,30 +1,31 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, Linkedin, Mail, MessageSquare, Camera, Sparkles, X, ShieldCheck, MousePointer2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
 import { FloatingDock } from '../ui/floating-dock';
 import { WebcamPixelGrid } from '../ui/webcam-pixel-grid';
+import { gsap, ScrollTrigger } from '../../lib/gsap';
 
 const socialLinks = [
   {
     title: "Email",
-    icon: <Mail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Mail className="h-full w-full text-neutral-400 dark:text-neutral-200 hover:text-purple-400 transition-colors" />,
     href: "mailto:saileshtrn06@gmail.com",
   },
   {
     title: "GitHub",
-    icon: <Github className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Github className="h-full w-full text-neutral-400 dark:text-neutral-200 hover:text-purple-400 transition-colors" />,
     href: "https://github.com/sailesh-codes",
   },
   {
     title: "LinkedIn",
-    icon: <Linkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Linkedin className="h-full w-full text-neutral-400 dark:text-neutral-200 hover:text-purple-400 transition-colors" />,
     href: "https://www.linkedin.com/in/sailesh-t-955780323/",
   },
   {
     title: "Blog",
-    icon: <MessageSquare className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <MessageSquare className="h-full w-full text-neutral-400 dark:text-neutral-200 hover:text-purple-400 transition-colors" />,
     href: "https://codelogics.hashnode.dev/",
   }
 ];
@@ -35,6 +36,10 @@ const Contact = () => {
   const [showInstructionModal, setShowInstructionModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -42,6 +47,44 @@ const Contact = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: formRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   const gridProps = useMemo(() => {
@@ -102,7 +145,6 @@ const Contact = () => {
   const enableWebcam = () => {
     setShowWebcam(true);
     setShowPrivacyModal(false);
-    // Show instruction modal with a slight delay so they see the grid first
     setTimeout(() => {
       setShowInstructionModal(true);
     }, 500);
@@ -111,7 +153,8 @@ const Contact = () => {
   return (
     <section 
       id="contact" 
-      className={`section-padding md:px-6 relative overflow-hidden min-h-screen flex flex-col items-center pt-32 pb-32 md:pb-12 transition-colors duration-700 ${showWebcam ? 'bg-black' : 'bg-transparent'}`}
+      ref={sectionRef}
+      className={`section-padding px-6 lg:px-24 relative overflow-hidden min-h-screen border-t border-white/10 ${showWebcam ? 'bg-black' : 'bg-transparent'}`}
     >
       <AnimatePresence>
         {showWebcam && (
@@ -136,153 +179,130 @@ const Contact = () => {
               borderOpacity={0.06}
               className="w-full h-full"
             />
-            {/* Dark overlay to ensure text readability */}
             <div className="absolute inset-0 bg-black/30 pointer-events-none" />
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="max-w-4xl mx-auto w-[85%] md:w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Get In Touch</h2>
-          
-          {/* Mode Toggle Button - Glassmorphic Purple */}
-          <div className="flex justify-center mb-12">
-            <motion.button
+      <div className="max-w-5xl mx-auto relative z-10">
+        
+        {/* SCFO Section 05 Header */}
+        <div ref={headerRef} className="mb-14">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="scfo-tag font-mono text-purple-400 font-bold">05</span>
+            <span className="h-[1px] w-8 bg-purple-500/40" />
+            <span className="scfo-tag">INITIATE CONTACT</span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif-editorial text-white tracking-tight mb-6">
+            Get In Touch
+          </h2>
+
+          {/* Mirror Universe Toggle */}
+          <div className="flex mb-8">
+            <button
               onClick={toggleMode}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={showWebcam ? {} : {
-                y: [0, -8, 0],
-                transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-              }}
-              className={`flex items-center gap-3 px-6 py-4 rounded-full font-bold text-lg backdrop-blur-md border-2 transition-all duration-500 ${
-                showWebcam 
-                  ? 'bg-purple-600/10 border-purple-500 text-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.2)]' 
-                  : 'bg-white/5 border-white/20 text-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.3)] hover:bg-white/10 hover:border-purple-500/50'
-              }`}
+              className="flex items-center gap-3 px-5 py-3 rounded-full border border-white/20 bg-white/[0.04] backdrop-blur-md text-xs font-mono tracking-wider uppercase text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all duration-300 shadow-lg"
             >
-              <div className={`p-2 rounded-full ${showWebcam ? 'bg-purple-500/20' : 'bg-purple-500/10 ring-4 ring-purple-500/5'}`}>
-                {showWebcam ? (
-                  <Sparkles className="w-5 h-5 text-purple-400" />
-                ) : (
-                  <Camera className="w-5 h-5 text-purple-400 animate-pulse" />
-                )}
-              </div>
-              <span className={`tracking-tight text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)] ${!showWebcam ? 'animate-pulse' : ''}`}>
-                {showWebcam ? 'Return to Galaxy' : 'Try the Mirror Universe'}
-              </span>
-            </motion.button>
+              {showWebcam ? (
+                <Sparkles className="w-4 h-4 text-purple-400" />
+              ) : (
+                <Camera className="w-4 h-4 text-purple-400 animate-pulse" />
+              )}
+              <span>{showWebcam ? 'Exit Mirror Universe' : 'Try the Mirror Universe'}</span>
+            </button>
           </div>
 
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-white/70 max-w-xl font-normal">
             Let's discuss your next project or just say hello. I'm always open to new opportunities.
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-bold mb-6">Let's Connect</h3>
-            <div className="flex items-center justify-start w-full py-8">
+        <div ref={formRef} className="grid md:grid-cols-2 gap-12 items-start">
+          <div>
+            <h3 className="text-xl font-serif-editorial text-white mb-4">Connect Directly</h3>
+            <div className="flex items-center justify-start w-full py-4">
               <FloatingDock mobileClassName="translate-y-0" desktopClassName="ml-0 mx-0" items={socialLinks} />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <form onSubmit={handleContactSubmit} className="space-y-6">
+          <div>
+            <form onSubmit={handleContactSubmit} className="space-y-5 scfo-card p-6 sm:p-8 rounded-2xl border border-white/10">
               <input type="hidden" name="_subject" value="New message from portfolio contact form" />
               <input type="hidden" name="_captcha" value="false" />
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <label htmlFor="name" className="block text-xs font-mono tracking-wider uppercase text-white/60 mb-2">
                   Name
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:border-purple-400 transition-colors"
                   placeholder="Your name"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                <label htmlFor="email" className="block text-xs font-mono tracking-wider uppercase text-white/60 mb-2">
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:border-purple-400 transition-colors"
                   placeholder="your.email@example.com"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                <label htmlFor="message" className="block text-xs font-mono tracking-wider uppercase text-white/60 mb-2">
                   Message
                 </label>
                 <textarea
                   id="message"
-                  rows={5}
+                  rows={4}
                   name="message"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all resize-none backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/15 rounded-lg text-white text-sm focus:outline-none focus:border-purple-400 transition-colors resize-none"
                   placeholder="Tell me about your project..."
                   required
                 ></textarea>
               </div>
               <Button
                 type="submit"
-                className="w-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] text-white font-semibold h-12 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+                className="w-full bg-white text-black hover:bg-neutral-200 font-semibold text-xs tracking-widest uppercase h-12 rounded-lg transition-all duration-300 shadow-lg"
               >
                 Send Message
               </Button>
             </form>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      <footer className="relative z-20 py-12 px-6 text-center mt-20 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-white/50 text-sm">
-            © {new Date().getFullYear()} Sailesh. All rights reserved.<br/>
-            <span className="text-xs opacity-70">(Disclaimer: All bugs were harmed during development)</span>
-          </p>
+      {/* SCFO Studio Footer */}
+      <footer className="relative z-20 pt-16 pb-8 text-center mt-28 border-t border-white/10 w-full max-w-5xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-white/40">
+          <p>© {new Date().getFullYear()} SAILESH STUDIO. ALL RIGHTS RESERVED.</p>
+          <p className="text-[0.65rem] opacity-70">(DISCLAIMER: ALL BUGS WERE HARMED DURING DEVELOPMENT)</p>
         </div>
       </footer>
 
       {/* Privacy Modal */}
       <AnimatePresence>
         {showPrivacyModal && (
-          <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-0">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowPrivacyModal(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              className="absolute inset-0 bg-black/85 backdrop-blur-xl"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 0 }}
-              animate={{ opacity: 1, scale: 1, y: -60 }}
-              exit={{ opacity: 0, scale: 0.9, y: 0 }}
-              className="relative w-full max-w-md bg-neutral-900 border border-white/10 rounded-3xl p-8 shadow-2xl"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative w-full max-w-md bg-[#0a0a0f] border border-white/15 rounded-2xl p-8 shadow-2xl z-10"
             >
               <button 
                 onClick={() => setShowPrivacyModal(false)}
@@ -292,28 +312,27 @@ const Contact = () => {
               </button>
 
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6">
-                  <ShieldCheck className="w-8 h-8 text-purple-400" />
+                <div className="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 border border-purple-500/30">
+                  <ShieldCheck className="w-7 h-7 text-purple-400" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-4">Hello friend!</h3>
-                <p className="text-white/60 mb-8 leading-relaxed">
+                <h3 className="text-2xl font-serif-editorial text-white mb-3">Hello friend!</h3>
+                <p className="text-white/70 mb-6 text-xs font-mono leading-relaxed">
                   To create this interactive experience, I'd like to use your camera. 
-                  Don't worry—your video is processed <strong>locally in your browser</strong> and is never recorded. 
-                  It's just for the visual effect!
+                  Your video is processed <strong>locally in your browser</strong> and is never recorded.
                 </p>
 
                 <div className="flex flex-col w-full gap-3">
                   <button
                     onClick={enableWebcam}
-                    className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-neutral-200 transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-white text-black font-bold py-3.5 rounded-xl hover:bg-neutral-200 transition-all text-xs uppercase tracking-widest flex items-center justify-center gap-2"
                   >
-                    <Sparkles className="w-5 h-5" />
+                    <Sparkles className="w-4 h-4 text-purple-600" />
                     Let's See it
                   </button>
                   <button
                     onClick={() => setShowPrivacyModal(false)}
-                    className="w-full bg-white/5 text-white/70 py-4 rounded-2xl hover:bg-white/10 transition-all"
+                    className="w-full bg-white/5 text-white/60 py-3.5 rounded-xl hover:bg-white/10 text-xs font-mono uppercase tracking-widest transition-all"
                   >
                     Maybe Later
                   </button>
@@ -324,28 +343,28 @@ const Contact = () => {
         )}
       </AnimatePresence>
 
-      {/* Instruction Modal (Second Modal) */}
+      {/* Instruction Modal */}
       <AnimatePresence>
         {showInstructionModal && (
-          <div className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-0 pointer-events-none">
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 pointer-events-none">
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: isMobile ? -20 : -100 }}
-              exit={{ opacity: 0, scale: 0.8, y: 30 }}
-              className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 shadow-2xl pointer-events-auto flex flex-col items-center gap-4 text-center max-w-xs"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="bg-[#0a0a0f]/95 backdrop-blur-2xl border border-purple-500/40 rounded-xl p-6 shadow-2xl pointer-events-auto flex flex-col items-center gap-3 text-center max-w-xs"
             >
-              <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center animate-bounce">
-                <MousePointer2 className="w-6 h-6 text-purple-400" />
+              <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center animate-bounce">
+                <MousePointer2 className="w-5 h-5 text-purple-400" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-white">Grid Active!</h4>
-                <p className="text-white/70 text-sm mt-1">
-                  Move around and wave your hands to see the pixel play in the background.
+                <h4 className="text-base font-serif-editorial text-white">Grid Active!</h4>
+                <p className="text-white/70 text-xs font-mono mt-1">
+                  Move around and wave your hands to see the pixel play.
                 </p>
               </div>
               <button
                 onClick={() => setShowInstructionModal(false)}
-                className="mt-2 text-xs text-purple-400 hover:text-purple-300 font-bold tracking-widest uppercase"
+                className="mt-1 text-xs text-purple-400 font-mono tracking-widest uppercase"
               >
                 Got it
               </button>

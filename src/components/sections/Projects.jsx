@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Github, ExternalLink } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Timeline } from '../ui/timeline';
@@ -33,7 +32,7 @@ const projects = [
     title: 'CottonCandy Designs',
     description:
       'CottonCandy Designs is a creative studio specializing in branding, poster designing, and etc.',
-    tech: ['React', 'Node.js', 'Express',],
+    tech: ['React', 'Node.js', 'Express'],
     image: '/images/CottonCandyDesings.jpeg',
     github: 'https://www.cottoncandydesigns.in/',
   },
@@ -59,52 +58,54 @@ const Projects = () => {
   const timelineData = projects.map((project, index) => ({
     title: project.title,
     content: (
-      <div className="bg-card w-full overflow-hidden relative border rounded-xl p-6 shadow-sm group">
-        <div className="project-card-glow"></div>
-        <div className="mb-4 overflow-hidden rounded-lg bg-black flex items-center justify-center">
+      <div className="scfo-card rounded-xl p-5 sm:p-7 border border-white/10 group">
+        <div className="mb-5 overflow-hidden rounded-lg bg-[#040406] border border-white/10 flex items-center justify-center">
           <img
-            className="w-full h-auto max-h-[350px] object-contain rounded-lg bg-black transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-auto max-h-[340px] object-contain rounded-lg transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
             alt={`${project.title} preview`}
             src={project.image}
           />
         </div>
-        <p className="text-muted-foreground mb-4 leading-relaxed">
+
+        <p className="text-white/70 mb-5 text-sm sm:text-base leading-relaxed font-normal">
           {project.description}
         </p>
+
+        {/* Tech Tag Pills */}
         <div className="flex flex-wrap gap-2 mb-6">
           {project.tech.map((tech, techIndex) => (
             <span
               key={techIndex}
-              className="skill-tag px-3 py-1 rounded-full text-sm font-medium"
+              className="scfo-tag border border-white/15 bg-white/[0.03] px-3 py-1 rounded-full"
             >
               {tech}
             </span>
           ))}
         </div>
+
+        {/* Action Link Buttons */}
         <div className="flex flex-wrap gap-3 mt-auto">
-          {/* Live Demo button for all cards */}
           <a href={project.demo || project.github || '#'} target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 text-xs font-mono tracking-wider uppercase text-white hover:bg-white hover:text-black transition-all duration-300 rounded-full"
               type="button"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-3.5 h-3.5" />
               Live Demo
             </Button>
           </a>
 
-          {/* Code button strictly for the last card */}
           {index === projects.length - 1 && (
             <a href={project.github || '#'} target="_blank" rel="noopener noreferrer">
               <Button
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] transition-all duration-300 hover:-translate-y-1 hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 text-xs font-mono tracking-wider uppercase text-white hover:bg-white hover:text-black transition-all duration-300 rounded-full"
                 type="button"
               >
-                <Github className="w-4 h-4" />
+                <Github className="w-3.5 h-3.5" />
                 Code
               </Button>
             </a>
@@ -115,7 +116,7 @@ const Projects = () => {
   }));
 
   return (
-    <section id="projects" className="w-full relative">
+    <section id="projects" className="w-full relative border-t border-white/10">
       <Timeline data={timelineData} />
     </section>
   );

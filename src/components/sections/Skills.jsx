@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 import LogoLoop from '../ui/LogoLoop';
+import { gsap, ScrollTrigger } from '../../lib/gsap';
 
 const row1Skills = [
   { name: "React", slug: "react" },
@@ -31,25 +31,22 @@ const SkillItem = ({ skill }) => {
 
   return (
     <div 
-      className="group/skill relative flex flex-col items-center justify-center mx-4 cursor-pointer select-none"
+      className="group/skill relative flex flex-col items-center justify-center mx-5 cursor-pointer select-none"
       onMouseEnter={() => setIsActive(true)}
       onMouseLeave={() => setIsActive(false)}
       onClick={() => setIsActive(!isActive)}
     >
-      {/* The Exact Brand Logo */}
-      <div className={`w-20 h-20 flex items-center justify-center p-2 transition-all duration-300 ${isActive ? 'scale-125 -translate-y-2' : ''}`}>
+      <div className={`w-18 h-18 flex items-center justify-center p-3 rounded-xl bg-white/[0.03] border border-white/10 transition-all duration-300 ${isActive ? 'scale-115 border-purple-500/50 bg-purple-500/10' : 'hover:border-white/20'}`}>
         <img 
           src={`https://cdn.simpleicons.org/${skill.slug}/ffffff`} 
           alt={skill.name}
-          className={`w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.2)] transition-all duration-300 ${isActive ? 'drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]' : ''}`}
+          className="w-full h-full object-contain filter drop-shadow-[0_0_4px_rgba(255,255,255,0.2)]"
         />
       </div>
       
-      {/* The "Pop" Name Label */}
-      <div className={`absolute -top-12 transition-all duration-300 pointer-events-none z-50 ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
-        <div className="bg-purple-600/90 backdrop-blur-md text-white text-xs font-bold px-4 py-3 rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.4)] whitespace-nowrap border border-white/10">
+      <div className={`absolute -top-10 transition-all duration-300 pointer-events-none z-50 ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
+        <div className="bg-[#12121c] text-white text-xs font-mono px-3 py-1.5 rounded-lg border border-white/20 shadow-xl whitespace-nowrap">
           {skill.name}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-600/90 rotate-45 border-r border-b border-white/10" />
         </div>
       </div>
     </div>
@@ -57,6 +54,48 @@ const SkillItem = ({ skill }) => {
 };
 
 const Skills = () => {
+  const sectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const marqueeRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      gsap.fromTo(
+        marqueeRef.current,
+        { opacity: 0, scale: 0.97 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: marqueeRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const row1 = row1Skills.map((skill, index) => ({
     node: <SkillItem key={`r1-${index}`} skill={skill} />
   }));
@@ -66,33 +105,31 @@ const Skills = () => {
   }));
 
   return (
-    <section id="skills" className="section-padding md:px-6 overflow-hidden">
-      <div className="max-w-6xl mx-auto w-[85%] md:w-full mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Skills & Technologies</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            My technical toolkit for building modern, scalable web applications.
-          </p>
-        </motion.div>
+    <section id="skills" ref={sectionRef} className="section-padding px-6 lg:px-24 overflow-hidden relative border-t border-white/10">
+      <div ref={headerRef} className="max-w-5xl mx-auto mb-16 relative z-10">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="scfo-tag font-mono text-purple-400 font-bold">03</span>
+          <span className="h-[1px] w-8 bg-purple-500/40" />
+          <span className="scfo-tag">TECHNOLOGY & TOOLKIT</span>
+        </div>
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif-editorial text-white tracking-tight mb-4">
+          Skills & Technologies
+        </h2>
+        <p className="text-lg text-white/60 max-w-xl font-normal">
+          My technical toolkit for building modern, scalable web applications.
+        </p>
       </div>
 
-      <div className="space-y-16 py-8">
+      <div ref={marqueeRef} className="space-y-10 py-4 relative z-10">
         <LogoLoop 
           logos={row1}
           speed={60}
           direction="left"
           gap={60}
-          logoHeight={120}
+          logoHeight={100}
           fadeOut
           fadeOutColor="transparent"
           pauseOnHover
-          className="py-4"
         />
 
         <LogoLoop 
@@ -100,11 +137,10 @@ const Skills = () => {
           speed={55}
           direction="right"
           gap={60}
-          logoHeight={120}
+          logoHeight={100}
           fadeOut
           fadeOutColor="transparent"
           pauseOnHover
-          className="py-4"
         />
       </div>
     </section>

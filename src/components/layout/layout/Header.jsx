@@ -1,39 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { useLenis } from '../SmoothScroll';
 
 const Header = ({ activeSection }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const menuRef = useRef(null);
+  const { scrollTo } = useLenis();
 
   const navLinks = [
-    { id: 'home', title: 'Home' },
-    { id: 'about', title: 'About' },
-    { id: 'projects', title: 'Projects' },
-    { id: 'skills', title: 'Skills' },
-    { id: 'contact', title: 'Contact' },
+    { id: 'home', title: 'START', index: '01' },
+    { id: 'about', title: 'ABOUT', index: '02' },
+    { id: 'projects', title: 'WORK', index: '03' },
+    { id: 'skills', title: 'STACK', index: '04' },
+    { id: 'contact', title: 'CONTACT', index: '05' },
   ];
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      // Offset for the fixed header height
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-         top: offsetPosition,
-         behavior: "smooth"
-      });
+  const handleNavClick = (sectionId) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      scrollTo(el, -80);
     }
     setIsOpen(false);
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 40);
     };
     
     const handleClickOutside = (event) => {
@@ -42,7 +36,7 @@ const Header = ({ activeSection }) => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     document.addEventListener('mousedown', handleClickOutside);
     
     return () => {
@@ -51,165 +45,103 @@ const Header = ({ activeSection }) => {
     };
   }, []);
 
-  const navVariants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.5, 
-        ease: "easeInOut" 
-      } 
-    },
-  };
-
-  const mobileMenuVariants = {
-    closed: { 
-      opacity: 0, 
-      y: -20,
-      transition: { 
-        duration: 0.2,
-        when: "afterChildren",
-        staggerChildren: 0.05,
-        staggerDirection: -1
-      }
-    },
-    open: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        duration: 0.3, 
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-        staggerDirection: 1
-      } 
-    },
-  };
-  
-  const navItemVariants = {
-    closed: { 
-      opacity: 0, 
-      y: -20,
-      transition: {
-        duration: 0.2
-      }
-    },
-    open: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    }),
-  };
-
-  const menuButtonVariants = {
-    initial: { scale: 1 },
-    tap: { scale: 0.95 },
-  };
-
   return (
     <>
-      <motion.header
-        variants={navVariants}
-        initial="hidden"
-        animate="visible"
-        className="fixed top-4 left-0 right-0 z-40 flex justify-end md:justify-center pointer-events-none px-4 md:px-0"
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 lg:px-16 py-4 flex items-center justify-between border-b ${
+          isScrolled
+            ? 'bg-[#08080a]/90 backdrop-blur-2xl border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)]'
+            : 'bg-transparent border-transparent'
+        }`}
       >
-        <div
-          className="pointer-events-auto px-4 md:px-8 py-2 md:py-0 md:h-[4.5rem] flex items-center gap-8 rounded-full"
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            boxShadow: '0 4px 32px rgba(0, 0, 0, 0.25)',
+        {/* Left: Brand Identity */}
+        <a 
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick('home');
           }}
+          className="flex items-center gap-3 group cursor-pointer"
         >
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={`#${link.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(link.id);
-                }}
-                className={`nav-link font-medium text-lg tracking-wide transition-colors ${
-                  activeSection === link.id
-                    ? 'active text-white'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                {link.title}
-              </a>
-            ))}
-          </nav>
+          <span className="font-serif-editorial text-lg tracking-widest text-white uppercase group-hover:text-purple-400 transition-colors">
+            SAILESH
+          </span>
+          <span className="scfo-tag border-l border-white/20 pl-3 text-white/40">
+            STUDIO
+          </span>
+        </a>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <motion.button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-1 rounded-full text-white/70 hover:text-white transition-colors"
-              variants={menuButtonVariants}
-              initial="initial"
-              whileTap="tap"
-              aria-label="Toggle menu"
+        {/* Center: Editorial Nav Links (Desktop) */}
+        <nav className="hidden md:flex items-center gap-10">
+          {navLinks.map((link) => (
+            <a
+              key={link.id}
+              href={`#${link.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick(link.id);
+              }}
+              className={`nav-link text-xs tracking-[0.25em] font-medium transition-colors ${
+                activeSection === link.id
+                  ? 'active text-white font-bold'
+                  : 'text-white/50 hover:text-white'
+              }`}
             >
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </motion.button>
-          </div>
+              {link.title}
+            </a>
+          ))}
+        </nav>
+
+        {/* Right: SCFO Style Pill Button */}
+        <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={() => handleNavClick('contact')}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-full border border-white/20 text-xs tracking-widest uppercase font-semibold text-white hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] group"
+          >
+            <span>GET IN TOUCH</span>
+            <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </button>
         </div>
-      </motion.header>
 
+        {/* Mobile menu toggle */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 rounded-full text-white/80 hover:text-white transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="w-6 h-6 text-purple-400" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </header>
 
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             ref={menuRef}
-            variants={mobileMenuVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            className="fixed inset-0 bg-background/95 backdrop-blur-lg z-30 md:hidden pt-24"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-[#08080a]/95 backdrop-blur-2xl z-40 md:hidden pt-28 px-8 border-b border-white/10"
           >
-            <nav className="container mx-auto px-6">
-              <ul className="flex flex-col space-y-6">
-                {navLinks.map((link, i) => (
-                  <motion.li 
-                    key={link.id}
-                    custom={i}
-                    variants={navItemVariants}
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                  >
-                    <a
-                      href={`#${link.id}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        scrollToSection(link.id);
-                      }}
-                      className={`block py-3 text-2xl font-medium transition-colors ${
-                        activeSection === link.id 
-                          ? 'text-primary' 
-                          : 'text-foreground/90 hover:text-primary'
-                      }`}
-                    >
-                      {link.title}
-                      {activeSection === link.id && (
-                        <motion.span 
-                          className="block h-0.5 bg-primary mt-1"
-                          layoutId="mobileNavIndicator"
-                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
+            <nav className="flex flex-col gap-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick(link.id);
+                  }}
+                  className={`flex items-center justify-between py-3 border-b border-white/10 text-xl font-serif-editorial tracking-wider ${
+                    activeSection === link.id ? 'text-purple-400 font-bold' : 'text-white/70'
+                  }`}
+                >
+                  <span>{link.title}</span>
+                  <span className="font-mono text-xs text-white/40">{link.index}</span>
+                </a>
+              ))}
             </nav>
           </motion.div>
         )}

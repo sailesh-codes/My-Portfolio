@@ -4,7 +4,7 @@ import {
   useTransform,
   motion,
 } from "motion/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 
 interface TimelineEntry {
   title: string;
@@ -24,92 +24,78 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
-    <div
-      className="w-full font-sans pb-10"
-      ref={containerRef}
-    >
-      <motion.div 
-        className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10 text-center mb-16 pt-20"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">
+    <div className="w-full font-sans pb-10" ref={containerRef}>
+      {/* SCFO Editorial Section Header */}
+      <div className="max-w-5xl mx-auto px-6 lg:px-24 mb-16 pt-16">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="scfo-tag font-mono text-purple-400 font-bold">02</span>
+          <span className="h-[1px] w-8 bg-purple-500/40" />
+          <span className="scfo-tag">PORTFOLIO & CASE STUDIES</span>
+        </div>
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-serif-editorial text-white tracking-tight mb-4">
           Featured Projects
         </h2>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-white/60 max-w-xl font-normal">
           Here are some of my recent projects that showcase my skills and passion for development.
         </p>
-      </motion.div>
+      </div>
 
-      <div ref={ref} className="relative max-w-7xl mx-auto mb-20">
+      <div ref={ref} className="relative max-w-5xl mx-auto mb-20 px-6 lg:px-24">
         {data.map((item, index) => {
-          // even indexes (0, 2...) have content on right, title on left
           const isRight = index % 2 === 0;
+          const projectNum = String(index + 1).padStart(2, '0');
 
           return (
-            <motion.div
+            <div
               key={index}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, margin: "-10% 0px -50% 0px" }}
-              className={`relative flex flex-col justify-start pt-10 md:pt-40 md:gap-0 ${
+              className={`relative flex flex-col justify-start pt-12 md:pt-28 ${
                 isRight ? "md:flex-row" : "md:flex-row-reverse"
               }`}
             >
-              {/* Center Dot Column */}
+              {/* Center SCFO Timeline Indicator */}
               <div className="absolute left-3 md:left-1/2 md:-translate-x-1/2 h-full w-10 z-20 pointer-events-none">
-                 <div className="sticky top-[10.5rem] md:top-40 h-10 w-10 rounded-full bg-black flex items-center justify-center border border-white/10 shadow-[0_0_10px_rgba(0,0,0,0.5)]">
-                   <motion.div 
-                     variants={{
-                       hidden: { scale: 0, opacity: 0 },
-                       visible: { scale: 1, opacity: 1 }
-                     }}
-                     transition={{ duration: 0.4, ease: "easeOut" }}
-                     className="h-4 w-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 shadow-[0_0_10px_rgba(168,85,247,0.6)]" 
-                   />
+                 <div className="sticky top-40 h-8 w-8 rounded-full bg-[#08080a] flex items-center justify-center border border-white/20">
+                   <div className="h-2.5 w-2.5 rounded-full bg-purple-400" />
                  </div>
               </div>
 
-              {/* Title Container */}
+              {/* Title Column */}
               <div
-                className={`sticky flex flex-col md:flex-row z-30 items-center top-40 self-start md:w-1/2 w-full ${
-                  isRight ? "md:justify-end md:text-right" : "md:justify-start md:text-left"
+                className={`sticky flex flex-col z-30 top-40 self-start md:w-1/2 w-full ${
+                  isRight ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"
                 }`}
               >
-                <h3
-                  className={`hidden md:block text-xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent ${
-                    isRight ? "md:pr-12 lg:pr-20" : "md:pl-12 lg:pl-20"
-                  }`}
-                >
+                <span className="font-mono text-xs text-purple-400 tracking-widest mb-1">
+                  PROJECT [ {projectNum} ]
+                </span>
+                <h3 className="hidden md:block text-2xl lg:text-4xl font-serif-editorial text-white">
                   {item.title}
                 </h3>
               </div>
 
-              {/* Content Box */}
+              {/* Content Box Column */}
               <div
-                className={`relative w-full md:w-1/2 pl-20 pr-4 ${
-                  isRight ? "md:pl-12 lg:pl-20 md:pr-0 md:pr-4" : "md:pr-12 lg:pr-20 md:pl-0 md:pl-4"
+                className={`relative w-full md:w-1/2 pl-14 pr-2 ${
+                  isRight ? "md:pl-12 md:pr-0" : "md:pr-12 md:pl-0"
                 }`}
               >
-                <h3 className="md:hidden block text-2xl mb-4 text-left font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                <h3 className="md:hidden block text-2xl mb-4 font-serif-editorial text-white">
                   {item.title}
                 </h3>
-                {item.content}{" "}
+                {item.content}
               </div>
-            </motion.div>
+            </div>
           );
         })}
-        <div
-          className="absolute md:left-1/2 md:-translate-x-1/2 left-8 top-0 bottom-0 overflow-hidden w-[2px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))] from-transparent from-[0%] via-neutral-200 dark:via-neutral-700 to-transparent to-[99%]  [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] "
-        >
+
+        {/* Central SCFO Line */}
+        <div className="absolute md:left-1/2 md:-translate-x-1/2 left-7 top-0 bottom-0 overflow-hidden w-[1px] bg-white/10">
           <motion.div
             style={{
               height: heightTransform,
               opacity: opacityTransform,
             }}
-            className="absolute inset-x-0 top-0  w-[2px] bg-gradient-to-t from-purple-500 via-blue-500 to-transparent from-[0%] via-[10%] rounded-full"
+            className="absolute inset-x-0 top-0 w-[1px] bg-gradient-to-b from-purple-400 to-blue-500"
           />
         </div>
       </div>

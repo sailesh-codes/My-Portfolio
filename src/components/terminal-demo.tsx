@@ -1,6 +1,4 @@
-"use client";
-import React from "react";
-import { Terminal } from "@/components/ui/terminal";
+import { Terminal } from "./ui/terminal";
 
 export default function TerminalDemo() {
   return (
