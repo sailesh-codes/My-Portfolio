@@ -1,0 +1,93 @@
+/* Custom Editorial Styling System for KAGE 影 */
+
+:root {
+  --color-near-black: #0A0B0E;
+  --color-blue-charcoal: #141820;
+  --color-warm-amber: #E5A93B;
+  --color-bone-white: #EAE6DF;
+  --color-vermilion: #C83B2B;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-near-black);
+  color: var(--color-bone-white);
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+}
+
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-near-black);
+  cursor: default;
+}
+
+/* Vertical Japanese Display Typography */
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.25em;
+}
+
+/* Word-by-Word Fade Reveal Animation */
+@keyframes fadeInWord {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInWord 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Fine Rule Borders & Accent Lines */
+.fine-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(229, 169, 59, 0.4), transparent);
+}
+
+/* Dark Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060709;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1C2330;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C83B2B;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  
+  .transition-all,
+  .transition-transform,
+  .transition-opacity {
+    transition: none !important;
+  }
+}
