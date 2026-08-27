@@ -1,257 +1,202 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap, ScrollTrigger, Observer, ScrollToPlugin } from '../lib/gsap';
 
 interface SmoothScrollCanvasProps {
-  totalFrames?: number;
-  framePath?: string;
-  mobileFramePath?: string;
-  fileExtension?: string;
+  videoSrc?: string;
 }
 
-const DEFAULT_TOTAL_FRAMES = 82;
-const DEFAULT_FRAME_PATH = '/scroll/chess/ezgif-frame-';
-const DEFAULT_EXTENSION = '.webp';
-
-// Format index with 3 digits, e.g., 1 -> "001"
-const formatFrameIndex = (index: number): string => {
-  return String(index).padStart(3, '0');
-};
-
-/**
- * SmoothScrollCanvas - Lag-Free Performance Optimized
- * 
- * Performance Optimizations:
- * 1. Frame Deduplication: Only redraws 2D canvas when the rounded frame index actually changes. Saves ~80-90% redundant draw calls.
- * 2. Smart Idle RAF Loop: Pauses requestAnimationFrame when scroll physics settle at rest, eliminating background CPU/GPU usage.
- * 3. Balanced DPR Resolution: Caps devicePixelRatio to max 1.75 for 60fps smoothness while preserving Retina sharpness.
- * 4. Off-Thread Image Decoding: Uses img.decode() to prevent main-thread jank when frames render for the first time.
- */
 export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
-  totalFrames = DEFAULT_TOTAL_FRAMES,
-  framePath = DEFAULT_FRAME_PATH,
-  mobileFramePath,
-  fileExtension = DEFAULT_EXTENSION,
+  videoSrc = '/videos/king-hero-allintra.mp4',
 }) => {
-  const [frameCount, setFrameCount] = useState<number>(totalFrames);
-  const TOTAL_FRAMES = frameCount;
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const heroSectionRef = useRef<HTMLDivElement | null>(null);
+  const targetTimeRef = useRef<number>(0);
+  const currentTimeRef = useRef<number>(0);
+  const rafIdRef = useRef<number | null>(null);
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef<number>(0);
-  const lastDrawnIndexRef = useRef<number>(-1);
-
-  const [imagesLoadedCount, setImagesLoadedCount] = useState<number>(0);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
-  // Auto-detect total frames from manifest.json
   useEffect(() => {
-    fetch('/scroll/chess/manifest.json')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && typeof data.totalFrames === 'number' && data.totalFrames > 0) {
-          setFrameCount(data.totalFrames);
+    gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
+
+    const video = videoRef.current;
+    const heroSection = heroSectionRef.current;
+    if (!video || !heroSection) return;
+
+    let triggerInstance: ScrollTrigger | null = null;
+
+    // Instant, zero-delay RAF seeking loop
+    const startRafLoop = () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+
+      const render = () => {
+        if (video && video.duration && !isNaN(video.duration)) {
+          const target = targetTimeRef.current;
+          const current = currentTimeRef.current;
+
+          // High-speed lerp (0.6) for instant, lag-free response
+          const next = current + (target - current) * 0.6;
+          currentTimeRef.current = next;
+
+          // Seek video frame immediately
+          if (Math.abs(video.currentTime - next) > 0.001) {
+            video.currentTime = next;
+          }
         }
-      })
-      .catch(() => {
-        // Silently use default totalFrames
+        rafIdRef.current = requestAnimationFrame(render);
+      };
+
+      rafIdRef.current = requestAnimationFrame(render);
+    };
+
+    const initVideoScrub = () => {
+      if (!video.duration || isNaN(video.duration)) return;
+
+      // Force first frame decode so video is visible immediately
+      if (video.currentTime === 0) {
+        video.currentTime = 0.001;
+        currentTimeRef.current = 0.001;
+        targetTimeRef.current = 0.001;
+      }
+
+      if (triggerInstance) {
+        triggerInstance.kill();
+      }
+
+      // GSAP ScrollTrigger updates video progress 1:1 with page scroll
+      triggerInstance = ScrollTrigger.create({
+        trigger: heroSection,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        pin: true,
+        onUpdate: (self) => {
+          if (video.duration && !isNaN(video.duration)) {
+            targetTimeRef.current = self.progress * video.duration;
+          }
+        },
       });
-  }, []);
 
-  // 1. Preload image sequence with async decoding off main thread
-  useEffect(() => {
-    let loaded = 0;
-    const images: HTMLImageElement[] = [];
+      startRafLoop();
+    };
 
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const activePath = isMobile && mobileFramePath ? mobileFramePath : framePath;
-
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      const frameNum = formatFrameIndex(i);
-      img.src = `${activePath}${frameNum}${fileExtension}`;
-
-      const handleImageReady = () => {
-        loaded++;
-        setImagesLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setIsLoaded(true);
-        }
-      };
-
-      img.onload = () => {
-        // Decode image asynchronously to avoid main-thread freeze
-        if ('decode' in img) {
-          img.decode().then(handleImageReady).catch(handleImageReady);
-        } else {
-          handleImageReady();
-        }
-      };
-
-      img.onerror = () => {
-        handleImageReady();
-      };
-
-      images.push(img);
+    // Attempt immediately if metadata already loaded
+    if (video.readyState >= 1 && !isNaN(video.duration)) {
+      initVideoScrub();
     }
 
-    imagesRef.current = images;
+    const handleLoadedMetadata = () => {
+      initVideoScrub();
+    };
+
+    const handleLoadedData = () => {
+      if (video.currentTime === 0) {
+        video.currentTime = 0.001;
+        currentTimeRef.current = 0.001;
+        targetTimeRef.current = 0.001;
+      }
+      initVideoScrub();
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('loadeddata', handleLoadedData);
 
     return () => {
-      imagesRef.current = [];
-    };
-  }, [framePath, mobileFramePath, fileExtension, TOTAL_FRAMES]);
-
-  // 2. Draw frame - skips redraw if frame index hasn't changed
-  const drawFrame = (frameIndex: number, forceRedraw = false) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const idx = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frameIndex)));
-
-    // PERF: Skip drawing if frame index is identical to previous draw
-    if (!forceRedraw && idx === lastDrawnIndexRef.current) return;
-    lastDrawnIndexRef.current = idx;
-
-    const ctx = canvas.getContext('2d', { alpha: false }); // alpha: false speeds up composite pipeline
-    if (!ctx) return;
-
-    const img = imagesRef.current[idx];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
-
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const imgAspect = img.naturalWidth / img.naturalHeight;
-    const canvasAspect = width / height;
-
-    let renderWidth = width;
-    let renderHeight = height;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    if (canvasAspect > imgAspect) {
-      renderHeight = width / imgAspect;
-      offsetY = (height - renderHeight) / 2;
-    } else {
-      renderWidth = height * imgAspect;
-      offsetX = (width - renderWidth) / 2;
-    }
-
-    ctx.drawImage(
-      img,
-      Math.floor(offsetX),
-      Math.floor(offsetY),
-      Math.ceil(renderWidth),
-      Math.ceil(renderHeight)
-    );
-  };
-
-  // 3. Handle canvas resize with balanced DPR & explicit dimensions
-  useEffect(() => {
-    const handleResize = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const rect = canvas.getBoundingClientRect();
-      // Cap DPR at 1.75 to balance ultra-sharp Retina rendering with 60fps performance
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
-
-      const displayWidth = Math.round(rect.width);
-      const displayHeight = Math.round(rect.height);
-
-      canvas.width = Math.round(displayWidth * dpr);
-      canvas.height = Math.round(displayHeight * dpr);
-
-      canvas.style.width = `${displayWidth}px`;
-      canvas.style.height = `${displayHeight}px`;
-
-      drawFrame(currentFrameRef.current, true);
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isLoaded]);
-
-  // 4. Direct 1:1 Scroll Tracking & Zero-Latency RAF Sync
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    let ticking = false;
-
-    const handleScroll = () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const totalScroll = container.scrollHeight - window.innerHeight;
-      const currentScroll = window.scrollY;
-      const progress = totalScroll > 0 ? Math.max(0, Math.min(1, currentScroll / totalScroll)) : 0;
-
-      // Direct 1:1 frame mapping without lerp coasting or delayed float
-      currentFrameRef.current = progress * (TOTAL_FRAMES - 1);
-
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => {
-          drawFrame(currentFrameRef.current);
-          ticking = false;
-        });
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+      if (triggerInstance) {
+        triggerInstance.kill();
       }
     };
+  }, [videoSrc]);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+  // Ultra-responsive SCFO-style Observer for instant 0ms trigger on wheel/touch/keys
+  useEffect(() => {
+    const heroSection = heroSectionRef.current;
+    if (!heroSection) return;
+
+    let isTweening = false;
+
+    const obs = Observer.create({
+      target: window,
+      type: 'wheel,touch,scroll,pointer,keys',
+      tolerance: 2,
+      onDown: () => {
+        if (isTweening) return;
+        const currentY = window.scrollY;
+        const targetEnd = heroSection.offsetTop + heroSection.offsetHeight - window.innerHeight;
+
+        // At start area -> trigger instant smooth scroll to end
+        if (currentY < targetEnd - 30) {
+          isTweening = true;
+          gsap.to(window, {
+            scrollTo: { y: targetEnd, autoKill: false },
+            duration: 0.95,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              isTweening = false;
+            },
+          });
+        }
+      },
+      onUp: () => {
+        if (isTweening) return;
+        const currentY = window.scrollY;
+
+        // At end area -> trigger instant smooth scroll back to start
+        if (currentY > 30) {
+          isTweening = true;
+          gsap.to(window, {
+            scrollTo: { y: 0, autoKill: false },
+            duration: 0.95,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              isTweening = false;
+            },
+          });
+        }
+      },
+    });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      obs.kill();
     };
-  }, [isLoaded, TOTAL_FRAMES]);
+  }, []);
 
   return (
     <div
-      ref={containerRef}
+      id="hero-section"
+      ref={heroSectionRef}
       className="relative w-full bg-black text-white selection:bg-none select-none overflow-x-hidden"
-      style={{ height: '600vh' }}
+      style={{ height: '200vh' }}
     >
-      {/* Preloader indicator while images load */}
-      {!isLoaded && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black font-mono text-xs text-neutral-400 tracking-widest">
-          <div className="mb-4 text-sm font-semibold tracking-wider text-white">
-            LOADING SCROLL ANIMATION
-          </div>
-          <div className="w-48 h-1 bg-neutral-800 rounded-full overflow-hidden mb-2">
-            <div
-              className="h-full bg-white transition-all duration-150 ease-out"
-              style={{ width: `${(imagesLoadedCount / TOTAL_FRAMES) * 100}%` }}
-            />
-          </div>
-          <div>{Math.round((imagesLoadedCount / TOTAL_FRAMES) * 100)}%</div>
-        </div>
-      )}
+      {/* SCFO Start Anchor */}
+      <div id="start" className="absolute top-0 left-0 w-full pointer-events-none" />
 
-      {/* Canvas container with clip-path mask for clean viewport rendering */}
+      {/* Sticky video container for locked full-viewport rendering */}
       <div
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden"
+        className="sticky top-0 left-0 w-full h-screen pointer-events-none z-0 overflow-hidden"
         style={{
           clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
           WebkitClipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
         }}
       >
-        <canvas
-          ref={canvasRef}
-          className="w-full h-full block pointer-events-none"
+        <video
+          id="hero-video"
+          ref={videoRef}
+          src={videoSrc}
+          muted
+          playsInline
+          preload="auto"
+          className="w-full h-full object-cover block pointer-events-none"
         />
       </div>
+
+      {/* SCFO End Anchor */}
+      <div id="end" className="absolute bottom-0 left-0 w-full pointer-events-none" />
     </div>
   );
 };
 
 export default SmoothScrollCanvas;
-
-
-
-
-
