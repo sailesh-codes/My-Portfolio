@@ -4,19 +4,33 @@ import { gsap, ScrollTrigger, Observer, ScrollToPlugin } from '../lib/gsap';
 
 interface SmoothScrollCanvasProps {
   videoSrc?: string;
+  queenVideoSrc?: string;
 }
 
 export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
   videoSrc = '/videos/king-hero-allintra.mp4',
+  queenVideoSrc = '/videos/queen-2-optimized.mp4',
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const heroSectionRef = useRef<HTMLDivElement | null>(null);
   const blackSectionRef = useRef<HTMLDivElement | null>(null);
   const glassCardRef = useRef<HTMLDivElement | null>(null);
+
+  // Queen Section Refs
+  const queenVideoRef = useRef<HTMLVideoElement | null>(null);
+  const queenSectionRef = useRef<HTMLDivElement | null>(null);
+  const queenTargetTimeRef = useRef<number>(0);
+  const queenRafIdRef = useRef<number | null>(null);
+
+  // ScrollTrigger Instance Refs
+  const triggerInstanceRef = useRef<ScrollTrigger | null>(null);
+  const queenTriggerInstanceRef = useRef<ScrollTrigger | null>(null);
+
   const targetTimeRef = useRef<number>(0);
   const currentTimeRef = useRef<number>(0);
   const rafIdRef = useRef<number | null>(null);
 
+  // ── 1. King Video Scrubbing ──
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
 
@@ -24,17 +38,14 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
     const heroSection = heroSectionRef.current;
     if (!video || !heroSection) return;
 
-    let triggerInstance: ScrollTrigger | null = null;
-
-    // Instant zero-lag RAF seeking loop (direct 1:1 frame tracking with GSAP scroll)
+    // Zero-lag RAF seeking loop with decoder queue protection
     const startRafLoop = () => {
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
 
       const render = () => {
         if (video && video.duration && !isNaN(video.duration)) {
           const target = targetTimeRef.current;
-          // Synchronize video frame 1:1 with scroll position without double-lerp lag
-          if (Math.abs(video.currentTime - target) > 0.0001) {
+          if (!video.seeking && Math.abs(video.currentTime - target) > 0.008) {
             video.currentTime = target;
           }
         }
@@ -47,21 +58,18 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
     const initVideoScrub = () => {
       if (!video.duration || isNaN(video.duration)) return;
 
-      // Force first frame decode so video is visible immediately
       if (video.currentTime === 0) {
         video.currentTime = 0.001;
         targetTimeRef.current = 0.001;
       }
 
-      if (triggerInstance) {
-        triggerInstance.kill();
+      if (triggerInstanceRef.current) {
+        triggerInstanceRef.current.kill();
       }
 
-      // Clamp max scroll time slightly before duration to avoid EOF buffering artifacts
       const safeDuration = Math.max(0, video.duration - 0.03);
 
-      // GSAP ScrollTrigger updates video progress 1:1 with page scroll
-      triggerInstance = ScrollTrigger.create({
+      triggerInstanceRef.current = ScrollTrigger.create({
         trigger: heroSection,
         start: 'top top',
         end: 'bottom bottom',
@@ -72,14 +80,12 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
             targetTimeRef.current = self.progress * safeDuration;
           }
           if (glassCardRef.current) {
-            // Instant, 1:1 synchronized card reveal without mid-scroll lag
             const cardProgress = Math.max(0, Math.min(1, (self.progress - 0.45) / 0.55));
             glassCardRef.current.style.opacity = String(cardProgress);
             glassCardRef.current.style.transform = `translate3d(0, ${(1 - cardProgress) * 20}px, 0) scale(${0.97 + cardProgress * 0.03})`;
           }
         },
         onScrubComplete: () => {
-          // Explicitly lock onto sharp target frame when scrubbing completes
           if (video && !isNaN(video.duration)) {
             video.currentTime = targetTimeRef.current;
           }
@@ -89,7 +95,6 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
       startRafLoop();
     };
 
-    // Attempt immediately if metadata already loaded
     if (video.readyState >= 1 && !isNaN(video.duration)) {
       initVideoScrub();
     }
@@ -107,77 +112,202 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
       initVideoScrub();
     };
 
+    const handleSeeked = () => {
+      if (video && video.duration && !isNaN(video.duration)) {
+        const target = targetTimeRef.current;
+        if (!video.seeking && Math.abs(video.currentTime - target) > 0.008) {
+          video.currentTime = target;
+        }
+      }
+    };
+
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('seeked', handleSeeked);
 
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('seeked', handleSeeked);
       if (rafIdRef.current) {
         cancelAnimationFrame(rafIdRef.current);
       }
-      if (triggerInstance) {
-        triggerInstance.kill();
+      if (triggerInstanceRef.current) {
+        triggerInstanceRef.current.kill();
       }
     };
   }, [videoSrc]);
 
-  // Discrete 2-Stage SCFO-style Observer with momentum lock buffer (prevents double-scroll/skipping)
+  // ── 2. Queen Video Scrubbing (Mirrors King Hero Video 1:1) ──
+  useEffect(() => {
+    const queenVideo = queenVideoRef.current;
+    const queenSection = queenSectionRef.current;
+    if (!queenVideo || !queenSection) return;
+
+    // Force immediate first-frame decode on mount so queen video is primed
+    if (queenVideo.currentTime === 0) {
+      queenVideo.currentTime = 0.001;
+      queenTargetTimeRef.current = 0.001;
+    }
+
+    const startQueenRafLoop = () => {
+      if (queenRafIdRef.current) cancelAnimationFrame(queenRafIdRef.current);
+
+      const renderQueen = () => {
+        if (queenVideo && queenVideo.duration && !isNaN(queenVideo.duration)) {
+          const target = queenTargetTimeRef.current;
+          if (!queenVideo.seeking && Math.abs(queenVideo.currentTime - target) > 0.003) {
+            queenVideo.currentTime = target;
+          }
+        }
+        queenRafIdRef.current = requestAnimationFrame(renderQueen);
+      };
+
+      queenRafIdRef.current = requestAnimationFrame(renderQueen);
+    };
+
+    const initQueenScrub = () => {
+      if (!queenVideo.duration || isNaN(queenVideo.duration)) return;
+
+      if (queenVideo.currentTime === 0) {
+        queenVideo.currentTime = 0.001;
+        queenTargetTimeRef.current = 0.001;
+      }
+
+      if (queenTriggerInstanceRef.current) {
+        queenTriggerInstanceRef.current.kill();
+      }
+
+      const safeDuration = Math.max(0, queenVideo.duration - 0.03);
+
+      queenTriggerInstanceRef.current = ScrollTrigger.create({
+        trigger: queenSection,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        pin: true,
+        onUpdate: (self) => {
+          if (queenVideo.duration && !isNaN(queenVideo.duration)) {
+            queenTargetTimeRef.current = self.progress * safeDuration;
+          }
+        },
+        onScrubComplete: () => {
+          if (queenVideo && !isNaN(queenVideo.duration)) {
+            queenVideo.currentTime = queenTargetTimeRef.current;
+          }
+        },
+      });
+
+      startQueenRafLoop();
+    };
+
+    if (queenVideo.readyState >= 1 && !isNaN(queenVideo.duration)) {
+      initQueenScrub();
+    }
+
+    const handleQueenMetadata = () => initQueenScrub();
+    const handleQueenData = () => {
+      if (queenVideo.currentTime === 0) queenVideo.currentTime = 0.001;
+      initQueenScrub();
+    };
+
+    const handleQueenSeeked = () => {
+      if (queenVideo && queenVideo.duration && !isNaN(queenVideo.duration)) {
+        const target = queenTargetTimeRef.current;
+        if (!queenVideo.seeking && Math.abs(queenVideo.currentTime - target) > 0.008) {
+          queenVideo.currentTime = target;
+        }
+      }
+    };
+
+    queenVideo.addEventListener('loadedmetadata', handleQueenMetadata);
+    queenVideo.addEventListener('loadeddata', handleQueenData);
+    queenVideo.addEventListener('seeked', handleQueenSeeked);
+
+    return () => {
+      queenVideo.removeEventListener('loadedmetadata', handleQueenMetadata);
+      queenVideo.removeEventListener('loadeddata', handleQueenData);
+      queenVideo.removeEventListener('seeked', handleQueenSeeked);
+      if (queenRafIdRef.current) cancelAnimationFrame(queenRafIdRef.current);
+      if (queenTriggerInstanceRef.current) queenTriggerInstanceRef.current.kill();
+    };
+  }, [queenVideoSrc]);
+
+  // ── 3. Multi-Stage SCFO Observer (3 Scrolls: 1st Video -> Black Screen -> 2nd Video) ──
   useEffect(() => {
     const heroSection = heroSectionRef.current;
     const blackSection = blackSectionRef.current;
+    const queenSection = queenSectionRef.current;
     if (!heroSection) return;
 
-    let isTweening = false;
+    const isTweeningRef = { current: false };
+    const currentIndexRef = { current: 0 };
     let cooldownTimer: NodeJS.Timeout | null = null;
 
     const getSnapPoints = () => {
       const vh = window.innerHeight;
-      const p0 = 0;
-      const p1 = heroSection.offsetHeight - vh; // End of video scrub section (~100vh)
-      const p2 = blackSection ? blackSection.offsetTop : heroSection.offsetHeight; // Top of black screen section (~200vh)
-      return [p0, p1, p2];
+      const kingTrigger = triggerInstanceRef.current;
+      const queenTrigger = queenTriggerInstanceRef.current;
+
+      const p0 = 0; // 1st Scroll Start: 1st Video top (0px)
+      const p1 = kingTrigger ? kingTrigger.end : heroSection.offsetHeight - vh; // 1st Scroll End: 1st Video scrubbed
+      const p2 = blackSection ? blackSection.offsetTop : p1 + vh; // 2nd Scroll: Black Screen section
+      const p3 = queenTrigger ? queenTrigger.end : p2 + vh * 2; // 3rd Scroll End: 2nd Video scrubbed
+      return [p0, p1, p2, p3];
     };
 
-    // Determine starting section index based on current scroll position
     const getCurrentIndex = (points: number[]) => {
       const y = window.scrollY;
       const p1 = points[1];
       const p2 = points[2];
+      const p3 = points[3];
+      if (y >= (p2 + p3) / 2) return 3;
       if (y >= (p1 + p2) / 2) return 2;
       if (y >= p1 / 2) return 1;
       return 0;
     };
 
-    let currentIndex = getCurrentIndex(getSnapPoints());
+    currentIndexRef.current = getCurrentIndex(getSnapPoints());
 
     const goToIndex = (targetIndex: number) => {
       const points = getSnapPoints();
       const clampedIndex = Math.max(0, Math.min(points.length - 1, targetIndex));
       
-      isTweening = true;
-      currentIndex = clampedIndex;
+      const isThirdScroll = clampedIndex === 3 || (currentIndexRef.current === 3 && targetIndex === 2);
+      const tweenDuration = isThirdScroll ? 2.2 : 0.65;
+      const cooldownDelay = isThirdScroll ? 600 : 350;
+
+      isTweeningRef.current = true;
+      currentIndexRef.current = clampedIndex;
 
       if (cooldownTimer) clearTimeout(cooldownTimer);
 
       gsap.to(window, {
         scrollTo: { y: points[clampedIndex], autoKill: false },
-        duration: 0.65,
-        ease: 'power2.out',
+        duration: tweenDuration,
+        ease: isThirdScroll ? 'power1.out' : 'power2.out',
         onComplete: () => {
-          // Sync video frames on completion
+          // Sync King video frame
           const video = videoRef.current;
-          if (clampedIndex === 1 && video && video.duration && !isNaN(video.duration)) {
+          if (clampedIndex >= 1 && video && video.duration && !isNaN(video.duration)) {
             const safeDuration = Math.max(0, video.duration - 0.03);
             video.currentTime = safeDuration;
           } else if (clampedIndex === 0 && video) {
             video.currentTime = 0.001;
           }
 
-          // 350ms Cooldown buffer to swallow remaining trackpad/mouse momentum events
+          // Sync Queen video frame
+          const qVideo = queenVideoRef.current;
+          if (clampedIndex === 3 && qVideo && qVideo.duration && !isNaN(qVideo.duration)) {
+            const qSafeDuration = Math.max(0, qVideo.duration - 0.03);
+            qVideo.currentTime = qSafeDuration;
+          } else if (clampedIndex <= 2 && qVideo) {
+            qVideo.currentTime = 0.001;
+          }
+
           cooldownTimer = setTimeout(() => {
-            isTweening = false;
-          }, 350);
+            isTweeningRef.current = false;
+          }, cooldownDelay);
         },
       });
     };
@@ -187,15 +317,15 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
       type: 'wheel,touch,scroll,pointer,keys',
       tolerance: 10,
       onDown: () => {
-        if (isTweening) return;
-        if (currentIndex < 2) {
-          goToIndex(currentIndex + 1);
+        if (isTweeningRef.current) return;
+        if (currentIndexRef.current < 3) {
+          goToIndex(currentIndexRef.current + 1);
         }
       },
       onUp: () => {
-        if (isTweening) return;
-        if (currentIndex > 0) {
-          goToIndex(currentIndex - 1);
+        if (isTweeningRef.current) return;
+        if (currentIndexRef.current > 0) {
+          goToIndex(currentIndexRef.current - 1);
         }
       },
     });
@@ -296,6 +426,42 @@ export const SmoothScrollCanvas: React.FC<SmoothScrollCanvasProps> = ({
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-8">
           {/* User can populate content here */}
         </div>
+      </div>
+
+      {/* Section 3: Queen Video Scrubbing Section */}
+      <div
+        id="queen-section"
+        ref={queenSectionRef}
+        className="relative w-full bg-black text-white overflow-x-hidden"
+        style={{ height: '200vh' }}
+      >
+        <div id="queen-start" className="absolute top-0 left-0 w-full pointer-events-none" />
+
+        <div
+          className="sticky top-0 left-0 w-full h-screen pointer-events-none z-0 overflow-hidden"
+          style={{
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+            WebkitClipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          }}
+        >
+          <video
+            id="hero-video-queen"
+            ref={queenVideoRef}
+            src={queenVideoSrc}
+            muted
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover block pointer-events-none"
+            style={{
+              imageRendering: 'crisp-edges',
+              transform: 'translate3d(0, 0, 0)',
+              backfaceVisibility: 'hidden',
+              willChange: 'transform',
+            }}
+          />
+        </div>
+
+        <div id="queen-end" className="absolute bottom-0 left-0 w-full pointer-events-none" />
       </div>
     </div>
   );
