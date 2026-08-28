@@ -16,7 +16,7 @@ if (fs.existsSync(path.join(__dirname, "upscaled_images"))) {
 }
 
 const outputDir = path.join(__dirname, "frames-webp");
-const publicOutputDir = __dirname;
+const publicOutputDir = path.join(__dirname, "../../public/scroll/chess");
 
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 if (!fs.existsSync(publicOutputDir)) fs.mkdirSync(publicOutputDir, { recursive: true });

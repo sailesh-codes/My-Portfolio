@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Renderer, Camera, Transform, Mesh, Sphere, Program, Geometry } from 'ogl';
+import { Renderer, Camera, Transform, Mesh, Sphere, Program, Geometry, OGLRenderingContext } from 'ogl';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
 
 // Helper to generate an Icosahedron geometry for OGL
-function createIcosahedronGeometry(gl: WebGLRenderingContext, radius = 2.2) {
+function createIcosahedronGeometry(gl: OGLRenderingContext, radius = 2.2) {
   const t = (1.0 + Math.sqrt(5.0)) / 2.0;
 
   const vertices = [
