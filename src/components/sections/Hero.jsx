@@ -1,145 +1,114 @@
 import React, { useEffect, useRef } from 'react';
-import { Code, Database, Globe, Zap, Palette, Server, ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Sparkles, Terminal, Code2 } from 'lucide-react';
+import { IglooCanvas3D } from '../canvas/IglooCanvas3D';
 import { EncryptedText } from '../ui/encrypted-text';
-import { gsap, ScrollTrigger } from '../../lib/gsap';
+import { useLenis } from '../layout/SmoothScroll';
+import { gsap } from '../../lib/gsap';
 
 const Hero = () => {
   const heroRef = useRef(null);
-  const titleRef = useRef(null);
-  const tagRef = useRef(null);
-  const subtitleRef = useRef(null);
-  const bioRef = useRef(null);
-  const techContainerRef = useRef(null);
-
-  const techButtons = [
-    { name: 'Frontend', icon: <Code className="w-3.5 h-3.5" /> },
-    { name: 'Backend', icon: <Server className="w-3.5 h-3.5" /> },
-    { name: 'Database', icon: <Database className="w-3.5 h-3.5" /> },
-    { name: 'UI/UX', icon: <Palette className="w-3.5 h-3.5" /> },
-    { name: 'API', icon: <Globe className="w-3.5 h-3.5" /> },
-    { name: 'Performance', icon: <Zap className="w-3.5 h-3.5" /> }
-  ];
+  const contentRef = useRef(null);
+  const { scrollTo } = useLenis();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       tl.fromTo(
-        tagRef.current,
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.8 }
-      )
-      .fromTo(
-        titleRef.current,
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1 },
-        '-=0.4'
-      )
-      .fromTo(
-        subtitleRef.current,
+        '.hero-stagger',
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        '-=0.5'
-      )
-      .fromTo(
-        bioRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        '-=0.4'
-      )
-      .fromTo(
-        '.scfo-hero-tech-tag',
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 },
-        '-=0.4'
+        { opacity: 1, y: 0, duration: 1, stagger: 0.12, delay: 0.2 }
       );
-
-      // SCFO Parallax Scroll Out
-      gsap.to(heroRef.current, {
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true,
-        },
-        y: 80,
-        opacity: 0.3,
-        ease: 'none',
-      });
     }, heroRef);
 
     return () => ctx.revert();
   }, []);
 
+  const handleScrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      scrollTo(el, -80);
+    }
+  };
+
   return (
-    <section 
-      id="home" 
+    <section
+      id="home"
       ref={heroRef}
-      className="min-h-screen flex flex-col justify-center px-6 lg:px-24 relative overflow-hidden pt-28 pb-16"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-28 pb-16 px-6 lg:px-24"
     >
-      <div className="w-full max-w-5xl mx-auto relative z-10">
-        
-        {/* SCFO Index Tag */}
-        <div ref={tagRef} className="flex items-center gap-3 mb-6">
-          <span className="scfo-tag font-mono text-purple-400 font-bold">00</span>
-          <span className="h-[1px] w-8 bg-purple-500/40" />
-          <span className="scfo-tag">FULL STACK DEVELOPMENT • AI SOLUTIONS</span>
+      {/* Interactive 3D Crystal Canvas in Background */}
+      <div className="absolute inset-0 pointer-events-auto z-0 opacity-80">
+        <IglooCanvas3D />
+      </div>
+
+      {/* Foreground Editorial Content */}
+      <div
+        ref={contentRef}
+        className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center text-center select-none pointer-events-none"
+      >
+        {/* SCFO Status Tag */}
+        <div className="hero-stagger pointer-events-auto flex items-center gap-3 mb-6 px-4 py-1.5 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="scfo-tag text-[11px] text-white/80 font-mono tracking-widest uppercase">
+            AVAILABLE FOR NEW VENTURES & FULL-TIME ROLES
+          </span>
         </div>
 
-        {/* SCFO Editorial Title */}
-        <h1 ref={titleRef} className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-serif-editorial tracking-tight text-white mb-6 leading-[0.98]">
-          Hi, I'm{' '}
-          <span className="italic font-normal bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent">
-            Sailesh
-          </span>
+        {/* Main Editorial Headline */}
+        <h1 className="hero-stagger text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif-editorial text-white tracking-tight leading-[0.95] mb-6">
+          SAILESH <span className="italic text-purple-400 font-normal">T</span>
         </h1>
 
-        {/* Encrypted Subtitle & Founder link */}
-        <div ref={subtitleRef} className="mb-6">
-          <p className="text-2xl sm:text-3xl md:text-4xl font-syne text-white/90 mb-4 max-w-3xl leading-snug">
-            <EncryptedText
-              text="Full Stack Developer and AI Solution Architect."
-              encryptedClassName="text-white/20"
-              revealedClassName="text-white/95"
-              revealDelayMs={100}
-            />
-          </p>
-          <h3 className="text-base md:text-lg text-white/60 tracking-wider">
-            Founder –{' '}
-            <a 
-              href="https://www.codecraftnet.com/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-purple-400 hover:text-white transition-colors underline decoration-purple-500/40 underline-offset-4"
-            >
-              Code Craft
-            </a>
-          </h3>
+        {/* Subtitle & Role */}
+        <div className="hero-stagger max-w-2xl text-lg sm:text-xl text-white/70 font-normal leading-relaxed mb-6">
+          <EncryptedText
+            text="Crafting high-performance web systems, creative interfaces & scalable software."
+            encryptedClassName="text-purple-400/50"
+            revealedClassName="text-white/80"
+            revealDelayMs={30}
+          />
         </div>
 
-        {/* Bio Paragraph */}
-        <p ref={bioRef} className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl leading-relaxed mb-10 font-normal">
-          I create modern, scalable web applications with clean code and exceptional user experiences.
-          Passionate about building solutions that make a difference.
-        </p>
+        {/* Action Buttons */}
+        <div className="hero-stagger pointer-events-auto flex flex-wrap items-center justify-center gap-4 mt-4">
+          <button
+            onClick={() => handleScrollTo('projects')}
+            className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-black text-xs font-semibold tracking-widest uppercase hover:bg-neutral-200 transition-all duration-300 shadow-[0_0_25px_rgba(255,255,255,0.15)] group cursor-pointer"
+          >
+            <span>EXPLORE WORK</span>
+            <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+          </button>
 
-        {/* SCFO Tech Stack Tags */}
-        <div ref={techContainerRef} className="flex flex-wrap gap-2.5 max-w-3xl mb-16">
-          {techButtons.map((button) => (
-            <div
-              key={button.name}
-              className="scfo-hero-tech-tag flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md text-xs font-mono tracking-wider text-white/80 hover:border-purple-500/40 hover:text-white transition-all duration-300"
-            >
-              <span className="text-purple-400">{button.icon}</span>
-              <span>{button.name}</span>
-            </div>
-          ))}
+          <button
+            onClick={() => handleScrollTo('contact')}
+            className="flex items-center gap-2 px-8 py-3.5 rounded-full border border-white/20 bg-white/[0.05] backdrop-blur-md text-white text-xs font-semibold tracking-widest uppercase hover:bg-white/15 hover:border-white/40 transition-all duration-300 group cursor-pointer"
+          >
+            <span>GET IN TOUCH</span>
+            <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </button>
         </div>
 
-        {/* SCFO Scroll Indicator */}
-        <div className="flex items-center gap-3 pt-6 border-t border-white/10 text-xs tracking-widest text-white/40 uppercase">
-          <ArrowDown className="w-3.5 h-3.5 animate-bounce text-purple-400" />
-          <span>SCROLL TO EXPLORE</span>
+        {/* Quick Highlights Bar */}
+        <div className="hero-stagger grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-12 mt-16 pt-8 border-t border-white/10 w-full max-w-3xl text-left pointer-events-auto">
+          <div>
+            <span className="scfo-tag text-purple-400 font-mono text-[10px] block mb-1">
+              FOCUS
+            </span>
+            <p className="text-white text-sm font-medium">Full Stack & AI Systems</p>
+          </div>
+          <div>
+            <span className="scfo-tag text-purple-400 font-mono text-[10px] block mb-1">
+              TECH
+            </span>
+            <p className="text-white text-sm font-medium">React, Next.js, Node, TS</p>
+          </div>
+          <div className="col-span-2 sm:col-span-1">
+            <span className="scfo-tag text-purple-400 font-mono text-[10px] block mb-1">
+              LOCATION
+            </span>
+            <p className="text-white text-sm font-medium">Remote / Worldwide</p>
+          </div>
         </div>
       </div>
     </section>
