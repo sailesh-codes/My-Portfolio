@@ -19,7 +19,7 @@ export function Scene() {
   );
 }
 
-const Skills = () => {
+const Skills: React.FC = () => {
   return (
     <section id="skills" className="relative w-full overflow-hidden border-t border-white/10 bg-[#161616]">
       <Scene />

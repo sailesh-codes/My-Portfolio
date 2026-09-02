@@ -24,7 +24,9 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@designcodeio/threeui": ["./src/shaders/index.ts"],
+      "@designcodeio/threeui/*": ["./src/shaders/*"]
     },
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

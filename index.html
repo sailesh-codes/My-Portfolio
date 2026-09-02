@@ -43,11 +43,12 @@
 
     html, body {
       width: 100%;
-      height: 100%;
-      height: 100dvh;
+      min-height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scroll-behavior: smooth;
       background-color: var(--surface);
       color: var(--ink);
       font-family: "Orbit Sans", Arial, Helvetica, sans-serif;
@@ -61,23 +62,43 @@
        3. Viewport & Stage Shell
        ------------------------------------------------------------- */
     .viewport {
-      position: fixed;
-      inset: 0;
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      background-color: var(--surface);
+      overflow-x: hidden;
+    }
+
+    .skills-section {
+      position: relative;
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      background-color: var(--surface);
+      min-height: 700px;
+      background-color: #161616;
       overflow: hidden;
+      z-index: 2;
     }
 
-    .stage {
+    .skills-iframe {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
+      border: 0;
+      background: #161616;
+      display: block;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       contain: strict;
       isolation: isolate;
       overflow: hidden;
+      background-color: var(--surface);
     }
 
     /* -------------------------------------------------------------
@@ -655,6 +676,18 @@
 </head>
 <body>
   <main class="viewport">
+    <!-- Skills Showcase Section (Field Manuals - ThreeUI) -->
+    <section class="skills-section" id="skills" aria-label="Skills & Technologies">
+      <iframe
+        src="/landing-pages/bestsellers-book-showcase.html"
+        title="Field Manuals — Tools for Thought"
+        sandbox="allow-downloads allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+        loading="eager"
+        class="skills-iframe"
+      ></iframe>
+    </section>
+
+    <!-- Responsive Section -->
     <section class="stage" id="stage">
       <!-- 1. Brand mark asterisk -->
       <svg class="brand-mark" viewBox="0 0 66 62" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Orbit logo">
