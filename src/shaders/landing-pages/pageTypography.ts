@@ -246,7 +246,7 @@ export function usePageTypography(recipe: PageTypographyRecipe, props: PageTypog
 
     const retoneRgba = (color: string) => {
       if (untouched) return color;
-      const match = color.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)\s*(?:[,/]\s*([\d.]+%?)\s*)?\)$/i);
+      const match = color.match(/^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)\s*(?:[,/]\s*([\d.]+%?)\s*)?\)$/i);
       if (!match) return color;
       const hex = `#${[match[1], match[2], match[3]]
         .map((channel) => Math.round(Number(channel)).toString(16).padStart(2, "0"))

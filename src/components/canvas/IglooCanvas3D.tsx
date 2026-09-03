@@ -269,7 +269,7 @@ export const IglooCanvas3D: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      scrollTimeline.kill();
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }

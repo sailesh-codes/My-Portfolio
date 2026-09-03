@@ -16,7 +16,20 @@ export const Hero: React.FC = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    const HlsClass = (window as unknown as { Hls?: any }).Hls;
+    interface CustomHls {
+      new (config?: Record<string, unknown>): {
+        loadSource: (src: string) => void;
+        attachMedia: (media: HTMLMediaElement) => void;
+        on: (event: string, callback: () => void) => void;
+        destroy: () => void;
+      };
+      isSupported: () => boolean;
+      Events: {
+        MANIFEST_PARSED: string;
+      };
+    }
+
+    const HlsClass = (window as unknown as { Hls?: CustomHls }).Hls;
 
     if (HlsClass && HlsClass.isSupported()) {
       const hls = new HlsClass({
@@ -51,6 +64,8 @@ export const Hero: React.FC = () => {
 
   // GSAP Entrance
   useEffect(() => {
+    if (!heroRef.current) return;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
@@ -64,7 +79,7 @@ export const Hero: React.FC = () => {
         { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1, stagger: 0.1 },
         '-=0.8'
       );
-    }, heroRef);
+    }, heroRef.current);
 
     return () => ctx.revert();
   }, []);
@@ -157,3 +172,6 @@ export const Hero: React.FC = () => {
     </section>
   );
 };
+
+export default Hero;
+

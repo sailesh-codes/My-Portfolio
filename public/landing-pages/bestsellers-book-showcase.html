@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#161616">
+  <meta name="theme-color" content="#29251d">
   <meta
     name="description"
     content="An earth-toned interactive field library for Codex, Claude Code, and Cursor."
@@ -11,9 +11,9 @@
   <title>Field Manuals — Tools for Thought</title>
   <style>
     :root {
-      --ink: #161616;
-      --ink-deep: #0e0e0e;
-      --ink-soft: #232323;
+      --ink: #29251d;
+      --ink-deep: #1d1a15;
+      --ink-soft: #3a382b;
       --pink: #c3a47b;
       --pink-bright: #dbc39c;
       --text: #eee2ca;
@@ -39,7 +39,7 @@
       width: 100%;
       min-height: 100%;
       margin: 0;
-      background: #161616;
+      background: var(--ink);
     }
 
     body {
@@ -66,7 +66,10 @@
       width: 100%;
       min-height: 100svh;
       overflow: hidden;
-      background: #161616;
+      background:
+        radial-gradient(circle at 49% 84%, rgba(117, 102, 71, .2), transparent 34%),
+        radial-gradient(circle at 14% 4%, rgba(100, 112, 77, .12), transparent 28%),
+        linear-gradient(180deg, #343025 0%, var(--ink) 48%, #211e18 100%);
     }
 
     .stage::after {
