@@ -5,7 +5,7 @@ import { EncryptedText } from '../ui/encrypted-text';
 import { useLenis } from '../layout/SmoothScroll';
 import { gsap } from '../../lib/gsap';
 
-export const Hero: React.FC = () => {
+export const HeroOriginal: React.FC = () => {
   const heroRef = useRef<HTMLElement | null>(null);
   const { scrollTo } = useLenis();
 
@@ -117,5 +117,4 @@ export const Hero: React.FC = () => {
   );
 };
 
-export { Hero as HeroOriginal, Hero as SmoothScrollHero };
-export default Hero;
+export default HeroOriginal;

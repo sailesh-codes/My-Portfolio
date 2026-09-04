@@ -8,7 +8,7 @@ import ScfoGridAndIndex from './components/layout/ScfoGridAndIndex';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Projects from './components/sections/Projects';
-import Skills from './components/sections/Skills';
+import ResponsiveSection from './components/sections/ResponsiveSection';
 import CTA from './components/sections/CTA';
 import Contact from './components/sections/Contact';
 
@@ -16,7 +16,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
-    const sections = ['home', 'about', 'projects', 'skills', 'contact'];
+    const sections = ['home', 'about', 'projects', 'responsive', 'contact'];
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 350;
@@ -59,8 +59,8 @@ export default function App() {
           {/* 03: Projects Timeline */}
           <Projects />
 
-          {/* 04: Skills & Tech Marquee */}
-          <Skills />
+          {/* 04: Responsive Morph Showcase */}
+          <ResponsiveSection />
 
           {/* 05: Collaboration CTA */}
           <CTA />

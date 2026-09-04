@@ -4,6 +4,27 @@ import tailwindcss from '@tailwindcss/vite'
 import path from "path"
 import fs from "fs"
 
+// Remove ProstheticsSection.tsx and SmoothScrollHero.tsx as requested
+const prostheticsPath = path.resolve(__dirname, 'src/components/ProstheticsSection.tsx');
+if (fs.existsSync(prostheticsPath)) {
+  try {
+    fs.unlinkSync(prostheticsPath);
+    console.log('Successfully removed ProstheticsSection.tsx');
+  } catch (e) {
+    console.warn('Could not remove ProstheticsSection.tsx', e);
+  }
+}
+
+const smoothScrollHeroPath = path.resolve(__dirname, 'src/components/SmoothScrollHero.tsx');
+if (fs.existsSync(smoothScrollHeroPath)) {
+  try {
+    fs.unlinkSync(smoothScrollHeroPath);
+    console.log('Successfully removed SmoothScrollHero.tsx');
+  } catch (e) {
+    console.warn('Could not remove SmoothScrollHero.tsx', e);
+  }
+}
+
 // Ensure assets and fonts directories exist and are synced
 const brainLogo = 'C:\\Users\\saile\\.gemini\\antigravity-ide\\brain\\272d6ff0-b413-444c-ad23-e12128a80c83\\logo_mark_1788056095247.jpg';
 
