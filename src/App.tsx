@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { motion } from 'framer-motion';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Toaster } from './components/ui/toaster';
 import Header from './components/layout/layout/Header';
 import MobileNav from './components/layout/MobileNav';
 import Hero from './components/sections/Hero';
 import Projects from './components/sections/Projects';
+import HorizontalText from './components/sections/HorizontalText';
 import Skills from './components/sections/Skills';
 import About from './components/sections/About';
 import Contact from './components/sections/Contact.tsx';
-import Galaxy from './components/ui/Galaxy';
 import CTA from './components/sections/CTA';
+import ScrollShowcase from './components/sections/ScrollShowcase';
+import Footer from './components/layout/layout/Footer';
+import { SmoothScroll } from './components/providers/SmoothScroll';
+import LoadingScreen from './components/ui/LoadingScreen';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
   const [isMobile, setIsMobile] = useState(false);
 
@@ -32,32 +39,49 @@ function App() {
   }, []); // Only run on mount
 
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const sections = ['home', 'about', 'projects', 'skills', 'contact'];
-          const scrollPosition = window.scrollY + 100;
+    const sections = ['home', 'about', 'projects', 'skills', 'contact'];
+    const observers: IntersectionObserver[] = [];
 
-          for (const section of sections) {
-            const element = document.getElementById(section) as HTMLElement | null;
-            if (element) {
-              const { offsetTop, offsetHeight } = element;
-              if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-                setActiveSection(section);
-                break;
-              }
-            }
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection(id);
           }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
+        },
+        { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+      );
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach((obs) => obs.disconnect());
+    };
   }, []);
+
+  useEffect(() => {
+    // Ensure viewport lands directly at the top of the hero section on load/refresh
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
+  const handleExitFinished = () => {
+    // Recalibrate GSAP ScrollTriggers now that the page is fully revealed and interactive
+    ScrollTrigger.refresh();
+  };
 
   return (
     <>
@@ -67,38 +91,30 @@ function App() {
         <meta property="og:title" content="Sailesh - Full Stack Developer Portfolio" />
         <meta property="og:description" content="Full-stack React, Node.js & Express developer specializing in modern web applications. View my projects and skills." />
       </Helmet>
-      
-      <div className="min-h-screen relative overflow-x-hidden bg-black">
 
-        {/* ── Galaxy Background (fixed, covers entire site) ── */}
-        <div className="fixed inset-0 w-full h-full z-0" style={{ background: '#000000' }}>
-          <Galaxy
-            mouseRepulsion
-            mouseInteraction
-            globalMouse
-            density={1}
-            glowIntensity={0.2}
-            saturation={0}
-            hueShift={140}
-            twinkleIntensity={0.3}
-            rotationSpeed={0.1}
-            repulsionStrength={0.5}
-            autoCenterRepulsion={0}
-            starSpeed={0.5}
-            speed={1}
-            transparent
-          />
-        </div>
+      {/* Luxury Preloader Screen with Curtain Reveal */}
+      <LoadingScreen
+        onLoadingComplete={handleLoadingComplete}
+        onExitFinished={handleExitFinished}
+      />
+      
+      <SmoothScroll />
+
+      {/* Main Page Container: Rock-solid, zero glitches or scale shifts */}
+      <div className="min-h-screen relative overflow-x-clip bg-black">
         <div className="content-wrapper relative z-10">
           <Header activeSection={activeSection} />
           <main>
             <Hero />
             <About />
             <Projects />
+            <HorizontalText />
             <Skills />
             <CTA />
+            <ScrollShowcase />
             <Contact />
           </main>
+          <Footer />
         </div>
         
         <MobileNav />

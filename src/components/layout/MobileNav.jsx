@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, User, Briefcase, Wrench, Mail } from 'lucide-react';
+import { scrollToTarget } from '../providers/SmoothScroll';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,10 +17,7 @@ const MobileNav = () => {
   ];
 
   const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToTarget(sectionId, -20);
     setIsOpen(false);
   };
 
@@ -57,29 +55,34 @@ const MobileNav = () => {
   }, []);
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-      {/* Mobile Navigation Bar */}
-      <div className="bg-black/40 backdrop-blur-xl border-t border-white/20">
-        <div className="flex justify-around items-center h-16">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`flex flex-col items-center justify-center w-full h-full transition-colors ${
-                activeSection === item.id 
-                  ? 'text-white' 
-                  : 'text-white/50 hover:text-white/80'
-              }`}
-            >
-              <span className="flex items-center justify-center mb-1">{item.icon}</span>
-              <span className="text-xs">{item.label}</span>
-              {activeSection === item.id && (
-                <div className="w-1 h-1 bg-white rounded-full mt-1"></div>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="mobile-nav-shell md:hidden fixed bottom-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 12px)' }}
+    >
+      {/* Floating Glass Pill */}
+      <nav
+        ref={menuRef}
+        className="mobile-nav-pill pointer-events-auto"
+      >
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => scrollToSection(item.id)}
+            className={`mobile-nav-item${activeSection === item.id ? ' active' : ''}`}
+            aria-label={item.label}
+          >
+            {/* Active glow bubble behind icon */}
+            {activeSection === item.id && (
+              <motion.span
+                layoutId="mobile-nav-active-bg"
+                className="mobile-nav-active-bg"
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
+            <span className="mobile-nav-icon">{item.icon}</span>
+            <span className="mobile-nav-label">{item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 };

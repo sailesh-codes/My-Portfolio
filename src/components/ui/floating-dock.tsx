@@ -43,15 +43,18 @@ const FloatingDockMobile = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("relative flex md:hidden items-center justify-start w-full mt-4", className)}>
-      <div className="flex flex-row flex-wrap gap-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 px-4 py-3">
+    <div className={cn("relative flex md:hidden items-center justify-center w-full mt-4", className)}>
+      <div className="fluid-glass-dock apple-glass-dock flex flex-row flex-nowrap items-center justify-center gap-2.5 sm:gap-4 rounded-2xl sm:rounded-3xl px-3 sm:px-4.5 py-2.5 sm:py-3.5 max-w-full overflow-x-auto no-scrollbar">
         {items.map((item) => (
           <a
             href={item.href}
             key={item.title}
-            className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 transition-all duration-300 hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+            aria-label={item.title}
+            target={item.href.startsWith('http') ? "_blank" : undefined}
+            rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
+            className="fluid-glass-dock-item apple-glass-dock-item flex h-[2.9rem] w-[2.9rem] sm:h-[3.6rem] sm:w-[3.6rem] flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
           >
-            <div className="h-6 w-6 text-white">{item.icon}</div>
+            <div className="dock-icon-wrapper h-5 w-5 sm:h-7 sm:w-7 flex items-center justify-center text-white">{item.icon}</div>
           </a>
         ))}
       </div>
@@ -67,15 +70,59 @@ const FloatingDockDesktop = ({
   className?: string;
 }) => {
   let mouseX = useMotionValue(Infinity);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const [fluidPos, setFluidPos] = useState({ x: 50, y: 50 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    mouseX.set(e.pageX);
+    if (!dockRef.current) return;
+    const rect = dockRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setFluidPos({ x, y });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(Infinity);
+    setIsHovered(false);
+  };
+
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.pageX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
+      ref={dockRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={
+        {
+          "--fluid-x": `${fluidPos.x}%`,
+          "--fluid-y": `${fluidPos.y}%`,
+          "--fluid-opacity": isHovered ? "0.95" : "0.5",
+        } as React.CSSProperties
+      }
       className={cn(
-        "mx-auto hidden h-[5.5rem] mt-8 items-end gap-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 px-4 pb-3 md:flex",
+        "fluid-glass-dock apple-glass-dock mr-auto ml-0 hidden h-[6rem] mt-6 items-end gap-7 rounded-3xl px-5 pb-3.5 md:flex",
         className,
       )}
     >
+      {/* Dynamic Fluid Glass Refraction Caustic Glare */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-3xl overflow-hidden transition-opacity duration-500"
+        style={{ opacity: isHovered ? 0.95 : 0.35 }}
+      >
+        <div
+          className="absolute inset-0 transition-transform duration-100 ease-out"
+          style={{
+            background: `radial-gradient(circle 110px at ${fluidPos.x}% ${fluidPos.y}%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 45%, transparent 100%)`,
+          }}
+        />
+      </div>
+
       {items.map((item) => (
         <IconContainer mouseX={mouseX} key={item.title} {...item} />
       ))}
@@ -102,15 +149,15 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [56, 85, 56]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [56, 85, 56]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [64, 96, 64]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [64, 96, 64]);
   let yTransform = useTransform(distance, [-150, 0, 150], [0, -20, 0]);
 
-  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [28, 42, 28]);
+  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [32, 48, 32]);
   let heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [28, 42, 28],
+    [32, 48, 32],
   );
 
   let width = useSpring(widthTransform, {
@@ -143,13 +190,18 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <a href={href}>
+    <a
+      href={href}
+      aria-label={title}
+      target={href.startsWith('http') ? "_blank" : undefined}
+      rel={href.startsWith('http') ? "noopener noreferrer" : undefined}
+    >
       <motion.div
         ref={ref}
         style={{ width, height, y }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-white/5 border border-white/10 transition-colors duration-300 hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+        className="fluid-glass-dock-item apple-glass-dock-item relative flex aspect-square items-center justify-center rounded-full"
       >
         <AnimatePresence>
           {hovered && (
@@ -157,7 +209,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-10 left-1/2 w-fit rounded-md border border-white/20 bg-black/50 backdrop-blur-md px-3 py-1 text-sm whitespace-pre text-white z-50"
+              className="fluid-glass-dock-tooltip apple-glass-dock-tooltip -top-11"
             >
               {title}
             </motion.div>
@@ -165,7 +217,7 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center"
+          className="dock-icon-wrapper flex items-center justify-center text-white"
         >
           {icon}
         </motion.div>

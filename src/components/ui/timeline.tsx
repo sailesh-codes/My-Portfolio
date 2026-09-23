@@ -5,6 +5,7 @@ import {
   motion,
 } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 
 interface TimelineEntry {
   title: string;
@@ -23,21 +24,124 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
   const heightTransform = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
+  const headingMagneticRef = useRef<HTMLDivElement>(null);
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [headingMagneticOffset, setHeadingMagneticOffset] = useState({ x: 0, y: 0 });
+  const [isHeadingHovered, setIsHeadingHovered] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleMotionChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleMotionChange);
+    return () => mediaQuery.removeEventListener('change', handleMotionChange);
+  }, []);
+
+  // Section-wide mouse parallax tracker (active when Projects section is in view)
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const hasPointer = window.matchMedia('(pointer: fine)').matches;
+    if (!hasPointer) return;
+
+    let rafId: number | null = null;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      // Track when section is in or near viewport
+      if (rect.bottom < -100 || rect.top > window.innerHeight + 100) return;
+
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const { innerWidth, innerHeight } = window;
+        const normX = (e.clientX / innerWidth - 0.5) * 2;
+        const normY = (e.clientY / innerHeight - 0.5) * 2;
+        setMouseOffset({ x: normX, y: normY });
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [prefersReducedMotion]);
+
+  // Magnetic attraction when hovering near/over the "Projects" heading
+  const handleHeadingMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReducedMotion) return;
+    const el = headingMagneticRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const deltaX = (e.clientX - centerX) * 0.38;
+    const deltaY = (e.clientY - centerY) * 0.38;
+
+    gsap.to(el, {
+      x: deltaX,
+      y: deltaY,
+      duration: 0.32,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  };
+
+  const handleHeadingMouseLeave = () => {
+    if (prefersReducedMotion) return;
+    const el = headingMagneticRef.current;
+    if (!el) return;
+
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      duration: 0.85,
+      ease: "elastic.out(1.1, 0.4)",
+      overwrite: "auto",
+    });
+  };
+
   return (
     <div
       className="w-full font-sans pb-10"
       ref={containerRef}
     >
       <motion.div 
-        className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10 text-center mb-16 pt-20"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
+        className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10 text-center mb-16 pt-20 relative"
+        initial={{ opacity: 0, y: 40, scale: 0.94 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 100, damping: 14, mass: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">
-          Featured Projects
-        </h2>
+        {/* Ambient Glow Backdrop Layer matching Hero & About */}
+        <div
+          className="absolute top-6 left-1/2 -translate-x-1/2 w-[60vw] max-w-[650px] h-[260px] rounded-full pointer-events-none opacity-25 blur-[90px]"
+          style={{
+            background: 'radial-gradient(circle, rgba(147, 51, 234, 0.25) 0%, rgba(59, 130, 246, 0.12) 45%, transparent 70%)',
+            transform: prefersReducedMotion ? 'none' : `translate3d(${mouseOffset.x * -18}px, ${mouseOffset.y * -12}px, 0)`,
+            transition: 'transform 0.2s cubic-bezier(0.2, 0, 0, 1)',
+            willChange: 'transform',
+          }}
+        />
+
+        <div className="inline-block relative mb-6 z-10">
+          <div
+            ref={headingMagneticRef}
+            onMouseMove={handleHeadingMouseMove}
+            onMouseLeave={handleHeadingMouseLeave}
+            className="cursor-default select-none py-1 px-4 inline-block"
+            style={{
+              willChange: 'transform',
+            }}
+          >
+            <h2 className="projects-display-word">
+              Projects
+            </h2>
+          </div>
+        </div>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Here are some of my recent projects that showcase my skills and passion for development.
         </p>

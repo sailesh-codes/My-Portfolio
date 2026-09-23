@@ -1,0 +1,245 @@
+/* =========================================================================
+   CTA SECTION - GSAP SCROLLTRIGGER SEE-THROUGH TEXT & PARALLAX
+   ========================================================================= */
+
+.cta-section {
+  position: relative;
+  width: 100%;
+  min-height: 185vh;
+  background-color: #000000;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── Unified Pinned Stage (Single Stacking Context for Difference Blending) ── */
+.cta-pin-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Multi-speed Parallax Background Images Track ── */
+.cta-images-track {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.75rem;
+  padding: 0 3.5rem;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta-image-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform;
+}
+
+.cta-image-item {
+  width: 100%;
+  max-width: 290px;
+  height: 56vh;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  opacity: 0.88;
+  filter: brightness(0.92) contrast(1.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+  transition: opacity 0.3s ease;
+}
+
+/* ── See-Through Heading Overlay with Difference Blend Mode ── */
+.cta-heading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  text-align: center;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  z-index: 10;
+}
+
+/* ── Display Heading using Ultra-Bold Font for Dramatic See-Through Effect ── */
+.cta-display-heading {
+  font-family: 'Krona One', 'Clash Display', 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-align: center;
+  user-select: none;
+  color: #FFFFFF;
+  font-size: clamp(2.3rem, 5.4vw, 5.8rem);
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+}
+
+.cta-heading-top {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+/* ── Highlighted Word with Animated SVG Loop ── */
+.cta-clamp {
+  position: relative;
+  display: inline-block;
+  padding: 0.05em 0.25em;
+  color: #FFFFFF;
+}
+
+.cta-clamp-svg {
+  position: absolute;
+  width: 124%;
+  height: 165%;
+  top: 50%;
+  left: -12%;
+  transform: translateY(-50%) rotate(1.5deg);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+
+.cta-draw {
+  stroke: #d8b4fe;
+  stroke-width: 7.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-miterlimit: 10;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── Responsive Rules ── */
+@media (max-width: 1023px) {
+  .cta-section {
+    min-height: auto !important;
+    padding: 5rem 1.25rem 4rem;
+  }
+
+  .cta-pin-stage {
+    height: auto !important;
+    min-height: 360px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-heading-overlay {
+    position: relative !important;
+    inset: auto !important;
+    mix-blend-mode: normal !important;
+    z-index: 10;
+  }
+
+  .cta-display-heading {
+    color: #FFFFFF !important;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
+  }
+
+  .cta-images-track {
+    position: absolute !important;
+    inset: 0 !important;
+    opacity: 0.18 !important;
+    filter: blur(2px) !important;
+    pointer-events: none !important;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .cta-image-item {
+    height: 40vh;
+    border-radius: 0.65rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cta-section {
+    padding: 4rem 1rem 3rem;
+  }
+
+  .cta-pin-stage {
+    min-height: 300px;
+  }
+
+  .cta-display-heading {
+    font-size: clamp(2.15rem, 7.4vw, 3.5rem);
+    line-height: 1.18;
+  }
+
+  .cta-images-track {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    padding: 0 0.75rem;
+  }
+
+  /* Show 2 well-proportioned cards on tablet/mobile instead of 4 squished cards */
+  .cta-image-wrapper:nth-child(n+3) {
+    display: none;
+  }
+
+  .cta-image-item {
+    height: 34vh;
+    max-width: 220px;
+    border-radius: 0.55rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-section {
+    padding: 3rem 0.75rem 2.5rem;
+  }
+
+  .cta-pin-stage {
+    min-height: 240px;
+  }
+
+  .cta-display-heading {
+    font-size: clamp(1.85rem, 7.8vw, 2.55rem);
+  }
+
+  .cta-images-track {
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .cta-image-item {
+    height: 28vh;
+    max-width: 160px;
+    border-radius: 0.45rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .cta-image-item {
+    max-width: 360px;
+    height: 56vh;
+  }
+
+  .cta-display-heading {
+    font-size: 6.2rem;
+  }
+}
+

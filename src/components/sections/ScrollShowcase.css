@@ -1,0 +1,255 @@
+/* =========================================================================
+   SCROLL SHOWCASE - ADVANCED GSAP SCROLL ANIMATIONS
+   (Zooming 3-Column Grid, Parallax Scale, Opposing Dual-Track Horizontal Pin)
+   ========================================================================= */
+
+.scroll-showcase-container {
+  position: relative;
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── Section 1: Zooming 3-Column Grid ── */
+.showcase-grid-section {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  z-index: 2;
+  padding: 6rem 1.5rem 3rem;
+  box-sizing: border-box;
+}
+
+.showcase-grid-layout {
+  display: grid;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  transform-origin: center center;
+}
+
+.showcase-column {
+  height: 100%;
+}
+
+.showcase-column-content {
+  display: grid;
+  grid-template-rows: repeat(3, 38vh);
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.showcase-grid-image {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.showcase-grid-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0.85rem;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.showcase-grid-image:hover img {
+  transform: scale(1.04);
+}
+
+/* ── Section 2: Scale-Up Cinematic Parallax Panel ── */
+.showcase-parallax-section {
+  position: relative;
+  min-height: 85vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  transform-origin: center center;
+  z-index: 3;
+}
+
+.showcase-parallax-image {
+  width: 100%;
+  max-width: 1080px;
+  max-height: 72vh;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 1.25rem;
+  border: none;
+  box-shadow: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Section 3: Pinned Opposing Horizontal Dual-Track Gallery ── */
+.showcase-pin-section {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-row-gap: 1.5rem;
+  grid-template-rows: 1fr 1fr;
+  padding: 1.5rem 0;
+  width: 100%;
+  background-color: #000000;
+  box-sizing: border-box;
+  z-index: 4;
+}
+
+.showcase-pin-content {
+  width: 200%;
+  display: grid;
+  grid-column-gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  will-change: transform;
+  height: 100%;
+}
+
+.showcase-pin-box {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.showcase-pin-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0.85rem;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.showcase-pin-box:hover .showcase-pin-image {
+  transform: scale(1.04);
+}
+
+/* ── Spacers ── */
+.showcase-spacer {
+  height: 25vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showcase-spacer-end {
+  height: 15vh;
+}
+
+/* ── Desktop vs Mobile Container Visibility ── */
+.showcase-mobile-container {
+  display: none !important;
+}
+
+.showcase-desktop-container {
+  display: block;
+}
+
+/* ── Responsive Rules ── */
+@media (max-width: 1023px) {
+  .showcase-desktop-container {
+    display: none !important;
+  }
+
+  .showcase-mobile-container {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 4rem;
+    box-sizing: border-box;
+  }
+
+  .showcase-mobile-reveal-item {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .showcase-mobile-image-card {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background-color: #09090d;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(168, 85, 247, 0.07);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  }
+
+  .showcase-mobile-image-card:active {
+    transform: scale(0.985);
+    border-color: rgba(168, 85, 247, 0.35);
+  }
+
+  .showcase-mobile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .showcase-mobile-container {
+    gap: 2rem;
+    padding: 2.25rem 1rem 3.5rem;
+  }
+
+  .showcase-mobile-image-card {
+    height: 280px;
+    border-radius: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .showcase-mobile-container {
+    gap: 1.6rem;
+    padding: 1.75rem 0.85rem 3rem;
+  }
+
+  .showcase-mobile-image-card {
+    height: 240px;
+    border-radius: 0.85rem;
+  }
+}

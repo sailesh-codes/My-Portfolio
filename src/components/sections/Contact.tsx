@@ -1,63 +1,158 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Github, Linkedin, Mail, MessageSquare, Camera, Sparkles, X, ShieldCheck, MousePointer2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Github, Globe, Linkedin, Mail, MessageSquare, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
 import { FloatingDock } from '../ui/floating-dock';
-import { WebcamPixelGrid } from '../ui/webcam-pixel-grid';
 
 const socialLinks = [
   {
     title: "Email",
-    icon: <Mail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Mail className="h-full w-full text-white/90" />,
     href: "mailto:saileshtrn06@gmail.com",
   },
   {
+    title: "CodeCraft",
+    icon: <Globe className="h-full w-full text-white/90" />,
+    href: "https://www.codecraftnet.com/",
+  },
+  {
     title: "GitHub",
-    icon: <Github className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Github className="h-full w-full text-white/90" />,
     href: "https://github.com/sailesh-codes",
   },
   {
     title: "LinkedIn",
-    icon: <Linkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <Linkedin className="h-full w-full text-white/90" />,
     href: "https://www.linkedin.com/in/sailesh-t-955780323/",
   },
   {
     title: "Blog",
-    icon: <MessageSquare className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+    icon: <MessageSquare className="h-full w-full text-white/90" />,
     href: "https://codelogics.hashnode.dev/",
   }
 ];
 
 const Contact = () => {
-  const [showWebcam, setShowWebcam] = useState(false);
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
-  const [showInstructionModal, setShowInstructionModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const headingMagneticRef = useRef<HTMLDivElement>(null);
 
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  // Detect screen width for desktop-only lateral reveal (md breakpoint = 768px)
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const checkScreen = () => setIsDesktop(window.innerWidth >= 768);
+    checkScreen();
+    window.addEventListener('resize', checkScreen);
+    return () => window.removeEventListener('resize', checkScreen);
   }, []);
 
-  const gridProps = useMemo(() => {
-    if (isMobile) {
-      return {
-        gridCols: 40,
-        gridRows: 70,
-        maxElevation: 60,
-      };
-    }
-    return {
-      gridCols: 60,
-      gridRows: 40,
-      maxElevation: 80,
+  // Detect prefers-reduced-motion
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleMotionChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleMotionChange);
+    return () => mediaQuery.removeEventListener('change', handleMotionChange);
+  }, []);
+
+  // ── Header Scroll Reveal Trajectory ──
+  const { scrollYProgress: headerScrollProgress } = useScroll({
+    target: headerRef,
+    offset: ['start end', 'center 60%'],
+  });
+
+  const headerY = useTransform(headerScrollProgress, [0, 0.75], [55, 0]);
+  const headerScale = useTransform(headerScrollProgress, [0, 0.75], [0.92, 1.0]);
+  const headerOpacity = useTransform(headerScrollProgress, [0, 0.35, 0.75], [0.15, 0.85, 1.0]);
+  const headerRotateX = useTransform(headerScrollProgress, [0, 0.75], [8, 0]);
+
+  // Subtitle description stagger
+  const subY = useTransform(headerScrollProgress, [0.12, 0.85], [30, 0]);
+  const subOpacity = useTransform(headerScrollProgress, [0.12, 0.45, 0.85], [0.2, 0.85, 1.0]);
+
+  // ── Grid Scroll Reveal Trajectory ──
+  const { scrollYProgress } = useScroll({
+    target: gridRef,
+    offset: ['start end', 'center 55%'],
+  });
+
+  // 1. Left Column ("Let's Connect") Reveal Transforms
+  const connectY = useTransform(scrollYProgress, [0, 0.72], [65, 0]);
+  const connectX = useTransform(scrollYProgress, [0, 0.72], [-28, 0]);
+  const connectScale = useTransform(scrollYProgress, [0, 0.72], [0.94, 1.0]);
+  const connectOpacity = useTransform(scrollYProgress, [0, 0.3, 0.72], [0.15, 0.85, 1.0]);
+
+  // Socials FloatingDock stagger
+  const dockY = useTransform(scrollYProgress, [0.1, 0.78], [30, 0]);
+  const dockOpacity = useTransform(scrollYProgress, [0.1, 0.4, 0.78], [0.2, 0.85, 1.0]);
+
+  // 2. Right Column ("Input fields" side) Reveal Transforms
+  const formY = useTransform(scrollYProgress, [0, 0.72], [65, 0]);
+  const formX = useTransform(scrollYProgress, [0, 0.72], [28, 0]);
+  const formScale = useTransform(scrollYProgress, [0, 0.72], [0.94, 1.0]);
+  const formOpacity = useTransform(scrollYProgress, [0, 0.3, 0.72], [0.15, 0.85, 1.0]);
+
+  // 3. Staggered reveal for individual input fields
+  const field1Y = useTransform(scrollYProgress, [0.05, 0.65], [25, 0]);
+  const field1Opacity = useTransform(scrollYProgress, [0.05, 0.35, 0.65], [0.2, 0.85, 1.0]);
+
+  const field2Y = useTransform(scrollYProgress, [0.10, 0.70], [30, 0]);
+  const field2Opacity = useTransform(scrollYProgress, [0.10, 0.40, 0.70], [0.2, 0.85, 1.0]);
+
+  const field3Y = useTransform(scrollYProgress, [0.15, 0.75], [35, 0]);
+  const field3Opacity = useTransform(scrollYProgress, [0.15, 0.45, 0.75], [0.2, 0.85, 1.0]);
+
+  const btnY = useTransform(scrollYProgress, [0.20, 0.80], [40, 0]);
+  const btnScale = useTransform(scrollYProgress, [0.20, 0.80], [0.94, 1.0]);
+  const btnOpacity = useTransform(scrollYProgress, [0.20, 0.50, 0.80], [0.2, 0.85, 1.0]);
+
+  // Magnetic attraction when hovering near/over the "Get In Touch" heading
+  const handleHeadingMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReducedMotion) return;
+    const el = headingMagneticRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const deltaX = (e.clientX - centerX) * 0.38;
+    const deltaY = (e.clientY - centerY) * 0.38;
+
+    gsap.to(el, {
+      x: deltaX,
+      y: deltaY,
+      duration: 0.32,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    });
+  };
+
+  const handleHeadingMouseLeave = () => {
+    if (prefersReducedMotion) return;
+    const el = headingMagneticRef.current;
+    if (!el) return;
+
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      duration: 0.85,
+      ease: 'elastic.out(1.1, 0.4)',
+      overwrite: 'auto',
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (headingMagneticRef.current) {
+        gsap.killTweensOf(headingMagneticRef.current);
+      }
     };
-  }, [isMobile]);
+  }, []);
 
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,268 +186,183 @@ const Contact = () => {
     }
   };
 
-  const toggleMode = () => {
-    if (!showWebcam) {
-      setShowPrivacyModal(true);
-    } else {
-      setShowWebcam(false);
-    }
-  };
-
-  const enableWebcam = () => {
-    setShowWebcam(true);
-    setShowPrivacyModal(false);
-    // Show instruction modal with a slight delay so they see the grid first
-    setTimeout(() => {
-      setShowInstructionModal(true);
-    }, 500);
-  };
-
   return (
     <section 
+      ref={sectionRef}
       id="contact" 
-      className={`section-padding md:px-6 relative overflow-hidden min-h-screen flex flex-col items-center pt-32 pb-32 md:pb-12 transition-colors duration-700 ${showWebcam ? 'bg-black' : 'bg-transparent'}`}
+      className="relative overflow-hidden flex flex-col items-center justify-center pt-16 pb-24 md:pt-20 md:pb-16 px-4 sm:px-6 md:px-8 w-full bg-transparent"
+      style={{
+        paddingLeft: 'max(1rem, env(safe-area-inset-left, 0px))',
+        paddingRight: 'max(1rem, env(safe-area-inset-right, 0px))',
+        paddingBottom: 'max(5.5rem, calc(4rem + env(safe-area-inset-bottom, 0px)))',
+      }}
     >
-      <AnimatePresence>
-        {showWebcam && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 z-0"
-          >
-            <WebcamPixelGrid
-              {...gridProps}
-              motionSensitivity={0.8}
-              elevationSmoothing={0.1}
-              colorMode="webcam"
-              backgroundColor="#000000"
-              mirror={true}
-              gapRatio={0.05}
-              invertColors={false}
-              darken={0.4}
-              borderColor="#ffffff"
-              borderOpacity={0.06}
-              className="w-full h-full"
-            />
-            {/* Dark overlay to ensure text readability */}
-            <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto w-[85%] md:w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Get In Touch</h2>
-          
-          {/* Mode Toggle Button - Glassmorphic Purple */}
-          <div className="flex justify-center mb-12">
-            <motion.button
-              onClick={toggleMode}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={showWebcam ? {} : {
-                y: [0, -8, 0],
-                transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-              }}
-              className={`flex items-center gap-3 px-6 py-4 rounded-full font-bold text-lg backdrop-blur-md border-2 transition-all duration-500 ${
-                showWebcam 
-                  ? 'bg-purple-600/10 border-purple-500 text-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.2)]' 
-                  : 'bg-white/5 border-white/20 text-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.3)] hover:bg-white/10 hover:border-purple-500/50'
-              }`}
-            >
-              <div className={`p-2 rounded-full ${showWebcam ? 'bg-purple-500/20' : 'bg-purple-500/10 ring-4 ring-purple-500/5'}`}>
-                {showWebcam ? (
-                  <Sparkles className="w-5 h-5 text-purple-400" />
-                ) : (
-                  <Camera className="w-5 h-5 text-purple-400 animate-pulse" />
-                )}
-              </div>
-              <span className={`tracking-tight text-purple-400 drop-shadow-[0_0_8px_rgba(168,85,247,0.5)] ${!showWebcam ? 'animate-pulse' : ''}`}>
-                {showWebcam ? 'Return to Galaxy' : 'Try the Mirror Universe'}
-              </span>
-            </motion.button>
-          </div>
-
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Let's discuss your next project or just say hello. I'm always open to new opportunities.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-12">
+      <div className="max-w-5xl lg:max-w-6xl mx-auto w-full relative z-10">
+        {/* ── Section Header with Smooth Scroll Reveal & Magnetic Cursor Effect ── */}
+        <div ref={headerRef} className="contact-header-wrapper relative select-none">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            style={
+              prefersReducedMotion
+                ? { opacity: 1 }
+                : {
+                    y: headerY,
+                    scale: headerScale,
+                    opacity: headerOpacity,
+                    rotateX: headerRotateX,
+                    transformPerspective: 1000,
+                    transformOrigin: 'bottom center',
+                  }
+            }
+            className="inline-block relative mb-4 z-10 will-change-transform"
           >
-            <h3 className="text-2xl font-bold mb-6">Let's Connect</h3>
-            <div className="flex items-center justify-start w-full py-8">
-              <FloatingDock mobileClassName="translate-y-0" desktopClassName="ml-0 mx-0" items={socialLinks} />
+            <div
+              ref={headingMagneticRef}
+              onMouseMove={handleHeadingMouseMove}
+              onMouseLeave={handleHeadingMouseLeave}
+              className="cursor-default select-none py-1 px-4 inline-block"
+              style={{
+                willChange: 'transform',
+              }}
+            >
+              <h2 className="contact-display-word">
+                Get In Touch
+              </h2>
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+          <motion.p
+            style={prefersReducedMotion ? {} : { y: subY, opacity: subOpacity }}
+            className="text-sm sm:text-base text-neutral-400 max-w-2xl mx-auto font-normal z-10 leading-relaxed text-center px-2"
           >
-            <form onSubmit={handleContactSubmit} className="space-y-6">
+            Let's discuss your next project or just say hello. I'm always open to new opportunities.
+          </motion.p>
+        </div>
+
+        {/* ── Contact Columns Grid with Smooth Scroll Reveal ── */}
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 lg:gap-14 items-start w-full">
+          {/* Left Column: Let's Connect */}
+          <motion.div
+            style={
+              prefersReducedMotion || !isDesktop
+                ? {
+                    y: connectY,
+                    scale: connectScale,
+                    opacity: connectOpacity,
+                  }
+                : {
+                    y: connectY,
+                    x: connectX,
+                    scale: connectScale,
+                    opacity: connectOpacity,
+                  }
+            }
+            className="flex flex-col items-center md:items-start text-center md:text-left will-change-transform w-full"
+          >
+            <h3 className="text-2xl sm:text-3xl font-bold mb-2.5 tracking-tight text-center md:text-left">Let's Connect</h3>
+            <p className="text-sm sm:text-base text-neutral-400 mb-5 font-normal leading-relaxed text-center md:text-left max-w-md mx-auto md:mx-0">
+              Reach out directly via email, check my repositories, or connect across socials.
+            </p>
+            <motion.div
+              style={prefersReducedMotion ? {} : { y: dockY, opacity: dockOpacity }}
+              className="flex items-center justify-center md:justify-start w-full py-2"
+            >
+              <FloatingDock mobileClassName="translate-y-0 justify-center" desktopClassName="!ml-0 !mr-auto !mx-0 mt-1 h-[5.25rem] gap-5 px-4 pb-2.5" items={socialLinks} />
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column: Input fields side */}
+          <motion.div
+            style={
+              prefersReducedMotion || !isDesktop
+                ? {
+                    y: formY,
+                    scale: formScale,
+                    opacity: formOpacity,
+                  }
+                : {
+                    y: formY,
+                    x: formX,
+                    scale: formScale,
+                    opacity: formOpacity,
+                  }
+            }
+            className="will-change-transform w-full max-w-lg mx-auto md:max-w-none md:mx-0"
+          >
+            <form onSubmit={handleContactSubmit} className="space-y-4 w-full">
               <input type="hidden" name="_subject" value="New message from portfolio contact form" />
               <input type="hidden" name="_captcha" value="false" />
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+
+              {/* Name Input */}
+              <motion.div
+                style={prefersReducedMotion ? {} : { y: field1Y, opacity: field1Opacity }}
+                className="space-y-1.5"
+              >
+                <label htmlFor="name" className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
                   Name
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-xl text-white placeholder:text-white/30 text-base font-normal tracking-wide transition-all duration-200 ease-out backdrop-blur-md focus:outline-none focus:border-white/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-white/10 focus:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
                   placeholder="Your name"
                   required
                 />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
+              </motion.div>
+
+              {/* Email Input */}
+              <motion.div
+                style={prefersReducedMotion ? {} : { y: field2Y, opacity: field2Opacity }}
+                className="space-y-1.5"
+              >
+                <label htmlFor="email" className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-xl text-white placeholder:text-white/30 text-base font-normal tracking-wide transition-all duration-200 ease-out backdrop-blur-md focus:outline-none focus:border-white/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-white/10 focus:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
                   placeholder="your.email@example.com"
                   required
                 />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
+              </motion.div>
+
+              {/* Message Input */}
+              <motion.div
+                style={prefersReducedMotion ? {} : { y: field3Y, opacity: field3Opacity }}
+                className="space-y-1.5"
+              >
+                <label htmlFor="message" className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
                   Message
                 </label>
                 <textarea
                   id="message"
-                  rows={5}
+                  rows={4}
                   name="message"
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all resize-none backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 hover:border-white/20 rounded-xl text-white placeholder:text-white/30 text-base font-normal tracking-wide leading-relaxed transition-all duration-200 ease-out resize-none backdrop-blur-md focus:outline-none focus:border-white/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-white/10 focus:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
                   placeholder="Tell me about your project..."
                   required
                 ></textarea>
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-purple-500/20 hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] text-white font-semibold h-12 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+              </motion.div>
+
+              {/* Send Button */}
+              <motion.div
+                style={prefersReducedMotion ? {} : { y: btnY, scale: btnScale, opacity: btnOpacity }}
               >
-                Send Message
-              </Button>
+                <button
+                  type="submit"
+                  id="contact-submit-btn"
+                  className="apple-glass-btn apple-glass-submit-btn group w-full h-12 rounded-xl text-sm sm:text-base font-semibold tracking-wide cursor-pointer flex items-center justify-center gap-2.5 transition-all"
+                >
+                  <span>Send Message</span>
+                  <Send className="w-4 h-4 text-white/90 transition-transform duration-500 ease-out group-hover:translate-x-1 group-hover:-translate-y-0.5" />
+                </button>
+              </motion.div>
             </form>
           </motion.div>
         </div>
       </div>
-
-      <footer className="relative z-20 py-12 px-6 text-center mt-20 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-white/50 text-sm">
-            © {new Date().getFullYear()} Sailesh. All rights reserved.<br/>
-            <span className="text-xs opacity-70">(Disclaimer: All bugs were harmed during development)</span>
-          </p>
-        </div>
-      </footer>
-
-      {/* Privacy Modal */}
-      <AnimatePresence>
-        {showPrivacyModal && (
-          <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-0">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowPrivacyModal(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 0 }}
-              animate={{ opacity: 1, scale: 1, y: -60 }}
-              exit={{ opacity: 0, scale: 0.9, y: 0 }}
-              className="relative w-full max-w-md bg-neutral-900 border border-white/10 rounded-3xl p-8 shadow-2xl"
-            >
-              <button 
-                onClick={() => setShowPrivacyModal(false)}
-                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6">
-                  <ShieldCheck className="w-8 h-8 text-purple-400" />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-white mb-4">Hello friend!</h3>
-                <p className="text-white/60 mb-8 leading-relaxed">
-                  To create this interactive experience, I'd like to use your camera. 
-                  Don't worry—your video is processed <strong>locally in your browser</strong> and is never recorded. 
-                  It's just for the visual effect!
-                </p>
-
-                <div className="flex flex-col w-full gap-3">
-                  <button
-                    onClick={enableWebcam}
-                    className="w-full bg-white text-black font-bold py-4 rounded-2xl hover:bg-neutral-200 transition-all flex items-center justify-center gap-2"
-                  >
-                    <Sparkles className="w-5 h-5" />
-                    Let's See it
-                  </button>
-                  <button
-                    onClick={() => setShowPrivacyModal(false)}
-                    className="w-full bg-white/5 text-white/70 py-4 rounded-2xl hover:bg-white/10 transition-all"
-                  >
-                    Maybe Later
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Instruction Modal (Second Modal) */}
-      <AnimatePresence>
-        {showInstructionModal && (
-          <div className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-0 pointer-events-none">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: isMobile ? -20 : -100 }}
-              exit={{ opacity: 0, scale: 0.8, y: 30 }}
-              className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 shadow-2xl pointer-events-auto flex flex-col items-center gap-4 text-center max-w-xs"
-            >
-              <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center animate-bounce">
-                <MousePointer2 className="w-6 h-6 text-purple-400" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-white">Grid Active!</h4>
-                <p className="text-white/70 text-sm mt-1">
-                  Move around and wave your hands to see the pixel play in the background.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowInstructionModal(false)}
-                className="mt-2 text-xs text-purple-400 hover:text-purple-300 font-bold tracking-widest uppercase"
-              >
-                Got it
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };

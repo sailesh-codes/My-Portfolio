@@ -68,20 +68,39 @@
 
 
 
+html {
+  scroll-behavior: auto !important;
+  overflow-x: clip;
+  max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: #000000;
   color: hsl(var(--foreground));
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100vw;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Force sections transparent so Galaxy shows through */
+/* Prevent iOS auto-zoom on mobile form inputs */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Transparent sections & content layout */
 section, main {
   background: transparent;
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 1000px;
 }
 
 .content-wrapper {
@@ -273,3 +292,691 @@ section, main {
 .nav-link.active::after {
   width: 100%;
 }
+
+/* =========================================================================
+   ABOUT, PROJECTS, SKILLS & CONTACT SECTION HERO-MATCHING TYPOGRAPHY & MAGNETIC STYLES
+   ========================================================================= */
+
+.about-display-word,
+.projects-display-word,
+.skills-display-word,
+.contact-display-word {
+  font-family: 'Krona One', 'Clash Display', 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-align: center;
+  user-select: none;
+  margin: 0;
+  padding: 0 0.05em;
+  color: #FFFFFF;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 40%, rgba(241, 245, 249, 0.75) 70%, rgba(226, 232, 240, 0.25) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.25) 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.25) 100%);
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.16));
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  will-change: transform;
+}
+
+.about-display-word,
+.projects-display-word,
+.skills-display-word,
+.contact-display-word {
+  font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .about-display-word,
+  .projects-display-word,
+  .skills-display-word,
+  .contact-display-word {
+    font-size: clamp(2.4rem, 8.8vw, 3.5rem);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-display-word,
+  .projects-display-word,
+  .skills-display-word,
+  .contact-display-word {
+    font-size: clamp(2.2rem, 8.5vw, 3.1rem);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-display-word,
+  .projects-display-word,
+  .skills-display-word,
+  .contact-display-word {
+    font-size: clamp(2.0rem, 8.2vw, 2.75rem);
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+  }
+
+  .contact-display-word {
+    font-size: clamp(1.75rem, 7.6vw, 2.45rem);
+    letter-spacing: 0.01em;
+  }
+}
+
+@media (max-width: 360px) {
+  .about-display-word,
+  .projects-display-word,
+  .skills-display-word,
+  .contact-display-word {
+    font-size: clamp(1.7rem, 7.8vw, 2.15rem);
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+
+  .contact-display-word {
+    font-size: clamp(1.35rem, 6.6vw, 1.75rem);
+    letter-spacing: 0.002em;
+  }
+}
+
+@media (max-width: 1023px) {
+  .about-display-word,
+  .projects-display-word,
+  .skills-display-word,
+  .contact-display-word {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 65%, rgba(241, 245, 249, 0.9) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  .footer-monument-text {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.95) 70%, rgba(200, 205, 215, 0.75) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+}
+
+/* About Section Scroll-to-Reveal Typography */
+.about-reveal-word {
+  display: inline-block;
+  will-change: opacity, transform, filter;
+  transition: opacity 0.15s ease, filter 0.15s ease, color 0.2s ease;
+}
+
+.contact-header-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  z-index: 20;
+}
+
+@media (min-width: 768px) {
+  .contact-header-wrapper {
+    margin-bottom: 5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+
+/* =========================================================================
+   FOOTER MONUMENTAL SIGNATURE TEXT (ARIYANA EFFECT)
+   ========================================================================= */
+
+.footer-monument-text {
+  font-family: 'Bebas Neue', 'Anton', 'Syne', 'Outfit', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 0.85;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  color: #FFFFFF;
+  background: linear-gradient(
+    180deg,
+    #FFFFFF 0%,
+    rgba(255, 255, 255, 0.95) 25%,
+    rgba(215, 220, 230, 0.7) 55%,
+    rgba(140, 145, 155, 0.4) 80%,
+    rgba(70, 75, 85, 0.15) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 40%,
+    rgba(0, 0, 0, 0.65) 70%,
+    rgba(0, 0, 0, 0.28) 95%
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 40%,
+    rgba(0, 0, 0, 0.65) 70%,
+    rgba(0, 0, 0, 0.28) 95%
+  );
+  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.08));
+}
+
+/* =========================================================================
+   APPLE OS / IPHONE LIQUID GLASS MORPHISM SYSTEM
+   Shared across Hero, Contact Send Message button, and Floating Dock
+   ========================================================================= */
+
+/* ── Apple Liquid Glass Button ── */
+.apple-glass-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.9rem 2.15rem;
+  border-radius: 9999px;
+  font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  isolation: isolate;
+  will-change: transform, box-shadow;
+}
+
+/* Subtle Glass Refraction Reflection */
+.apple-glass-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateY(-1px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.apple-glass-btn span,
+.apple-glass-btn svg {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+}
+
+.apple-glass-btn:hover {
+  transform: translateY(-1.5px);
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(255, 255, 255, 0.1),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.apple-glass-btn:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.apple-glass-btn:active {
+  transform: translateY(0) scale(0.99);
+  background-color: rgba(255, 255, 255, 0.14);
+  transition-duration: 0.15s;
+}
+
+/* ── Apple iPhone UI Liquid Glass Button (Contact Section) ── */
+#contact-submit-btn,
+.apple-glass-submit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  height: 3rem;
+  border-radius: 0.75rem !important;
+  font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(32px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2) !important;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  isolation: isolate;
+  will-change: transform, box-shadow;
+}
+
+/* Authentic iPhone UI Specular Reflection Sheen */
+#contact-submit-btn::before,
+.apple-glass-submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 70%
+  ) !important;
+  opacity: 0;
+  transform: translateY(-1px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#contact-submit-btn span,
+#contact-submit-btn svg,
+.apple-glass-submit-btn span,
+.apple-glass-submit-btn svg {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+}
+
+#contact-submit-btn:hover,
+.apple-glass-submit-btn:hover {
+  transform: translateY(-1.5px) !important;
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.42) !important;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(255, 255, 255, 0.1),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.18) !important;
+}
+
+#contact-submit-btn:hover::before,
+.apple-glass-submit-btn:hover::before {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+#contact-submit-btn:active,
+.apple-glass-submit-btn:active {
+  transform: translateY(0) scale(0.99) !important;
+  background-color: rgba(255, 255, 255, 0.14) !important;
+  transition-duration: 0.15s !important;
+}
+
+/* =========================================================================
+   FLUID GLASS DOCK (REACT BITS STYLE) - LIQUID TRANSMISSION & CHROMATIC ABERRATION
+   ========================================================================= */
+
+/* ── Fluid Glass Dock Container (Borderless Liquid Lens) ── */
+.fluid-glass-dock,
+.apple-glass-dock {
+  position: relative;
+  background: rgba(255, 255, 255, 0.065) !important;
+  backdrop-filter: blur(36px) saturate(220%) contrast(106%) brightness(105%) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(220%) contrast(106%) brightness(105%) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.65),
+    0 0 40px -10px rgba(130, 180, 255, 0.12),
+    inset 0 0 20px rgba(255, 255, 255, 0.05) !important;
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* Fluid liquid refraction layer */
+.fluid-glass-dock::before,
+.apple-glass-dock::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 85% 70% at var(--fluid-x, 50%) var(--fluid-y, 50%),
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 100%
+  );
+  opacity: var(--fluid-opacity, 0.6);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Fluid Glass Dock Icon Bubble (Plain Glass Orb) ── */
+.fluid-glass-dock-item,
+.apple-glass-dock-item {
+  position: relative;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(28px) saturate(180%) brightness(105%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(105%) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35) !important;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  isolation: isolate;
+}
+
+/* Clean glass specular highlight */
+.fluid-glass-dock-item::before,
+.apple-glass-dock-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    transparent 65%
+  );
+  opacity: 0.55;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Plain, clean hover effect (no color) */
+.fluid-glass-dock-item:hover,
+.apple-glass-dock-item:hover {
+  background: rgba(255, 255, 255, 0.17) !important;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(255, 255, 255, 0.14),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.fluid-glass-dock-item:hover::before,
+.apple-glass-dock-item:hover::before {
+  opacity: 1;
+}
+
+.fluid-glass-dock-item:active,
+.apple-glass-dock-item:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.13) !important;
+}
+
+.fluid-glass-dock-item .dock-icon-wrapper,
+.apple-glass-dock-item .dock-icon-wrapper {
+  position: relative;
+  z-index: 2;
+  color: #FFFFFF;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+}
+
+.fluid-glass-dock-item:hover .dock-icon-wrapper,
+.apple-glass-dock-item:hover .dock-icon-wrapper {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
+}
+
+/* ── Fluid Glass Floating Dock Tooltip (Plain Pill Capsule) ── */
+.fluid-glass-dock-tooltip,
+.apple-glass-dock-tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 15, 20, 0.88) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: none !important;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.55),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  padding: 0.35rem 0.95rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #FFFFFF;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* =========================================================================
+   MOBILE NAV PILL — iPhone-style glassmorphic floating dock
+   ========================================================================= */
+
+/* Outer shell: lifts pill off screen bottom */
+.mobile-nav-shell {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* The floating glass pill itself */
+.mobile-nav-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 420px;
+
+  /* Curved corners — full pill radius */
+  border-radius: 28px;
+
+  /* iPhone-grade glassmorphism */
+  background: rgba(18, 18, 22, 0.55);
+  backdrop-filter: blur(40px) saturate(200%) brightness(108%) contrast(108%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(108%) contrast(108%);
+
+  /* No harsh border — subtle glass edge */
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  outline: none;
+
+  /* Depth shadow + soft glow ring */
+  box-shadow:
+    0 24px 48px -8px rgba(0, 0, 0, 0.70),
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+
+  padding: 4px 6px;
+  gap: 2px;
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Specular top-edge shimmer — iPhone lens effect */
+.mobile-nav-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 30%,
+    rgba(255, 255, 255, 0.65) 50%,
+    rgba(255, 255, 255, 0.45) 70%,
+    transparent 100%
+  );
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Subtle inner radial glow for depth */
+.mobile-nav-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    rgba(255, 255, 255, 0.07) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Each nav item button */
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+  padding: 6px 4px 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 20px;
+  color: rgba(180, 180, 190, 0.75);
+  position: relative;
+  transition: color 0.25s ease;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item.active {
+  color: #ffffff;
+}
+
+.mobile-nav-item:not(.active):active {
+  transform: scale(0.92);
+  transition: transform 0.12s ease;
+}
+
+/* Active state: glowing background bubble (via layoutId spring) */
+.mobile-nav-active-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.095);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    0 0 14px rgba(255, 255, 255, 0.06);
+  z-index: 0;
+  display: block;
+}
+
+/* Icon container */
+.mobile-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}
+
+.mobile-nav-icon > svg {
+  width: 21px;
+  height: 21px;
+}
+
+.mobile-nav-item.active .mobile-nav-icon {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+}
+
+/* Label */
+.mobile-nav-label {
+  font-size: 0.665rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.25s ease;
+}
+
+.mobile-nav-item:not(.active) .mobile-nav-label {
+  opacity: 0.60;
+}
+
+/* Active indicator dot */
+.mobile-nav-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: #ffffff;
+  margin-top: 1px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 1;
+}
+
+/* Luxury loading screen shimmer animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}

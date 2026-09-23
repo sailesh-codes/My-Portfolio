@@ -449,6 +449,7 @@ export function Terminal({
         {/* Terminal Content */}
         <div
           ref={contentRef}
+          data-lenis-prevent
           className="no-visible-scrollbar min-h-[450px] h-auto md:h-[500px] overflow-y-auto p-6 font-mono text-sm md:text-base"
         >
           {lines.map((line, i) => (

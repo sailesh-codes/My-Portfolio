@@ -1,0 +1,118 @@
+/* =========================================================================
+   HORIZONTAL KINETIC SCROLL TEXT SECTION
+   ========================================================================= */
+
+.Horizontal {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 480px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background-color: #000000;
+  user-select: none;
+  z-index: 15;
+}
+
+/* Ambient glow accent behind the text */
+.Horizontal__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60vw;
+  max-width: 800px;
+  height: 50vh;
+  max-height: 500px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.14) 0%, rgba(59, 130, 246, 0.08) 45%, transparent 70%);
+  filter: blur(100px);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.Horizontal__container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.Horizontal__text {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  white-space: nowrap;
+  gap: clamp(1.5rem, 4vw, 6rem);
+  padding-left: 100vw;
+  padding-right: 35vw;
+  will-change: transform;
+}
+
+.heading-xl {
+  font-family: 'Clash Display', 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: clamp(2.25rem, 8.5vw, 8.5rem);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.char-split {
+  display: inline-block;
+  color: #FFFFFF;
+  margin: 0 clamp(0.02em, 0.2vw, 0.06em);
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+
+@keyframes horizontalMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 1023px) {
+  .Horizontal {
+    height: auto !important;
+    min-height: 200px !important;
+    padding: 3.5rem 0 !important;
+  }
+
+  .Horizontal__mobile-track {
+    display: flex;
+    width: max-content;
+    white-space: nowrap;
+    /* Faster scroll speed: 14s instead of 28s */
+    animation: horizontalMarqueeScroll 14s linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .Horizontal__text-mobile {
+    display: inline-flex;
+    align-items: center;
+    /* Bigger text on mobile */
+    font-size: clamp(2.4rem, 8vw, 4.5rem) !important;
+    white-space: nowrap;
+    margin: 0;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (max-width: 640px) {
+  .Horizontal__text-mobile {
+    font-size: clamp(2.1rem, 7vw, 3.2rem) !important;
+  }
+}

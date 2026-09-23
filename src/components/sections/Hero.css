@@ -1,0 +1,687 @@
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700&display=swap');
+
+/* =========================================================================
+   CINEMATIC KINETIC MARQUEE HERO DESIGN SYSTEM & CUSTOM PROPERTIES
+   ========================================================================= */
+
+:root {
+  /* ── Depth & Layering Architecture ── */
+  --hero-z-bg: 1;             /* Layer 0: Ambient glows & grid backdrop */
+  --hero-z-back-marquee: 10;  /* Layer 1: Back marquee scrolling behind subject */
+  --hero-z-center-img: 20;    /* Layer 2: Centerpiece 3D sculpture subject */
+  --hero-z-front-marquee: 25; /* Layer 3: Front marquee scrolling over subject */
+  --hero-z-ui: 35;            /* Layer 4: Bottom editorial card & buttons */
+  --hero-z-nav: 40;           /* Layer 5: Top navigation pill */
+  --hero-z-grain: 50;         /* Layer 6: Cinematic film grain overlay */
+
+  /* ── Typography Stack ── */
+  --hero-font-marquee: 'Krona One', 'Clash Display', 'Space Grotesk', sans-serif;
+  --hero-font-display: 'Clash Display', 'Space Grotesk', 'Outfit', sans-serif;
+
+  /* ── Curated Palette ── */
+  --hero-text-offwhite: #F4F4F2;
+  --hero-text-muted: rgba(244, 244, 242, 0.72);
+  --hero-bg-deep: #06080B;
+  --hero-accent-gold: #FFD700;
+  --hero-accent-purple: rgba(147, 51, 234, 0.2);
+  --hero-accent-blue: rgba(59, 130, 246, 0.18);
+  --hero-accent-cyan: rgba(6, 182, 212, 0.15);
+
+  /* ── Understated Translucent Navigation ── */
+  --hero-nav-bg: rgba(10, 13, 18, 0.5);
+  --hero-nav-border: rgba(255, 255, 255, 0.12);
+  --hero-nav-text: rgba(244, 244, 242, 0.85);
+  --hero-nav-text-hover: #FFFFFF;
+}
+
+/* Base Hero Container with isolated stacking context */
+.editorial-hero-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 640px;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--hero-bg-deep);
+  user-select: none;
+  margin-bottom: clamp(2.5rem, 6vh, 4.5rem);
+}
+
+/* Subtle ambient backdrop lighting & drift animations */
+@keyframes ambientGlowDrift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(25px, -15px) scale(1.08);
+  }
+}
+
+.hero-ambient-glow-1 {
+  animation: ambientGlowDrift 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.hero-ambient-glow-2 {
+  animation: ambientGlowDrift 22s ease-in-out infinite alternate-reverse;
+  will-change: transform;
+}
+
+/* Tech dot grid overlay */
+.hero-grid-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, black 20%, transparent 80%);
+}
+
+/* =========================================================================
+   LAYERED KINETIC MARQUEE STYLES
+   ========================================================================= */
+
+.marquee {
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--hero-font-marquee);
+  font-size: clamp(3.2rem, 9.5vw, 9.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.marquee-track {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+  animation: heroMarqueeScroll 35s linear infinite;
+}
+
+.marquee-content {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marquee-content span {
+  margin-right: 1.5rem;
+}
+
+.marquee-dot {
+  font-size: 0.6em;
+  opacity: 0.45;
+  color: var(--hero-accent-gold);
+  vertical-align: middle;
+}
+
+@keyframes heroMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Typography for still background display word */
+.hero-heading-wrapper {
+  top: 26%;
+}
+
+.hero-display-word {
+  font-family: var(--hero-font-marquee);
+  font-size: clamp(2.4rem, 13.5vw, 13rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  margin: 0;
+  padding: 0 0.05em;
+  color: #FFFFFF;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 40%, rgba(241, 245, 249, 0.75) 70%, rgba(226, 232, 240, 0.25) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.25) 100%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 45%, rgba(0, 0, 0, 0.25) 100%);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.12));
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Back Marquee (Layer 1: Behind Center Sculpture) */
+.marquee-back {
+  top: 20%;
+  z-index: var(--hero-z-back-marquee);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* Center Sculpture Cutout (Layer 2: Sandwiched Between Marquees) */
+.center-image {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(560px, 85vw, 1450px);
+  max-height: 98vh;
+  object-fit: contain;
+  z-index: var(--hero-z-center-img);
+  pointer-events: none;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9));
+  will-change: transform;
+}
+
+/* Front Marquee (Layer 3: In Front of Center Sculpture) */
+.marquee-front {
+  bottom: 22%;
+  z-index: var(--hero-z-front-marquee);
+  color: #FFFFFF;
+  text-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.95),
+    0 1px 4px rgba(0, 0, 0, 0.85);
+}
+
+/* =========================================================================
+   BOTTOM CONTENT SECTION
+   ========================================================================= */
+
+.hero-content-section {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.96) 0%, rgba(6, 8, 11, 0.82) 55%, transparent 100%);
+  padding: 1.5rem 1.5rem 2rem;
+  z-index: var(--hero-z-ui);
+  pointer-events: auto;
+}
+
+.hero-content-wrapper {
+  max-width: 1560px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+}
+
+.hero-role-block {
+  font-family: var(--hero-font-marquee);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7);
+  will-change: transform, opacity;
+}
+
+.hero-role-block h2 {
+  font-family: var(--hero-font-marquee);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.hero-title-desktop {
+  display: block;
+}
+
+.hero-title-mobile {
+  display: none !important;
+}
+
+/* Minimal Understated Top Navigation */
+.hero-nav-bar {
+  background: var(--hero-nav-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--hero-nav-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.hero-nav-link {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hero-nav-text);
+  transition: color 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.hero-nav-link:hover {
+  color: var(--hero-accent-gold);
+  transform: translateY(-1px);
+}
+
+.hero-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--hero-accent-gold);
+  transition: width 0.3s ease;
+}
+
+/* =========================================================================
+   APPLE OS LIQUID GLASS BUTTONS
+   ========================================================================= */
+
+.apple-glass-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.9rem 2.15rem;
+  border-radius: 9999px;
+  font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  isolation: isolate;
+  will-change: transform, box-shadow;
+}
+
+/* Subtle Glass Refraction Reflection */
+.apple-glass-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: translateY(-1px);
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.apple-glass-btn span,
+.apple-glass-btn svg {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease;
+}
+
+.apple-glass-btn:hover {
+  transform: translateY(-1.5px);
+  background-color: rgba(255, 255, 255, 0.17);
+  border-color: rgba(255, 255, 255, 0.38);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(255, 255, 255, 0.08),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.apple-glass-btn:hover::before {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.apple-glass-btn:active {
+  transform: translateY(0) scale(0.99);
+  background-color: rgba(255, 255, 255, 0.14);
+  transition-duration: 0.2s;
+}
+
+/* Secondary Button Glass Treatment */
+.apple-glass-btn-secondary {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.apple-glass-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.38),
+    0 0 14px rgba(255, 255, 255, 0.06),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* =========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================= */
+
+/* =========================================================================
+   MOBILE HERO — FULLY RESPONSIVE 3D KINETIC EXPERIENCE
+   max-width: 768px (Only affects mobile view; desktop remains 100% intact)
+   ========================================================================= */
+@media (max-width: 768px) {
+  .editorial-hero-container {
+    min-height: 100vh;
+    height: 100vh;
+    min-height: 100svh;
+    height: 100svh;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  /* ── Display Heading — Positioned lower for optimal mobile vertical balance ── */
+  .hero-heading-wrapper {
+    top: clamp(9.5rem, 28vh, 14rem);
+    transform: none !important;
+    z-index: 15;
+    width: 100%;
+    padding: 0 0.75rem;
+  }
+
+  /* Override any lingering inline transform applied via JS */
+  .hero-heading-wrapper[style] {
+    transform: none !important;
+  }
+
+  /* ── "SAILESH" Display Word — Increased size for mobile view alone, bold and high-impact ── */
+  .hero-display-word {
+    font-size: clamp(3.6rem, 17vw, 6.5rem);
+    letter-spacing: 0.01em;
+    line-height: 1.02;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 0.25rem;
+    box-sizing: border-box;
+    /* Rich silver-white gradient */
+    background: linear-gradient(
+      175deg,
+      #FFFFFF 0%,
+      #F8FAFC 35%,
+      rgba(226, 232, 240, 0.75) 65%,
+      rgba(148, 163, 184, 0.25) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    mask-image: none;
+    -webkit-mask-image: none;
+    filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.16))
+            drop-shadow(0 0 55px rgba(147, 51, 234, 0.22));
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── Hide center image on mobile view ── */
+  .center-image {
+    display: none !important;
+  }
+
+  /* ── Bottom content bar — Elevated vertical position on mobile ── */
+  .hero-content-section {
+    padding: 0.75rem 1rem calc(16rem + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.98) 0%,
+      rgba(6, 8, 11, 0.88) 50%,
+      transparent 100%
+    );
+  }
+
+  .hero-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.15rem;
+    padding: 0;
+  }
+
+  .hero-role-block,
+  .hero-role-block[style] {
+    max-width: 100%;
+    margin-bottom: 0.25rem !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .hero-title-desktop {
+    display: none !important;
+  }
+
+  .hero-title-mobile {
+    display: block !important;
+  }
+
+  .hero-role-block h2 {
+    font-size: clamp(1.6rem, 6.8vw, 2.25rem);
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    color: rgba(244, 244, 242, 0.95);
+  }
+
+  .hero-actions-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    max-width: 460px !important;
+    margin-top: 1.75rem !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .apple-glass-btn {
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+    padding: 0.62rem 0.85rem !important;
+    font-size: clamp(1.02rem, 4.1vw, 1.15rem) !important;
+    font-weight: 600 !important;
+    gap: 0.45rem !important;
+    white-space: nowrap !important;
+    justify-content: center !important;
+    border-radius: 9999px !important;
+    box-shadow:
+      0 4px 22px rgba(0, 0, 0, 0.35),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .apple-glass-btn svg {
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* =========================================================================
+   SMALL PHONE OVERRIDE ≤ 480px
+   ========================================================================= */
+@media (max-width: 480px) {
+  .hero-heading-wrapper {
+    top: clamp(8.5rem, 26vh, 12rem);
+    padding: 0 0.5rem;
+  }
+
+  .hero-display-word {
+    font-size: clamp(3.1rem, 16.2vw, 4.5rem);
+    letter-spacing: 0.005em;
+  }
+
+  .hero-content-section {
+    padding: 0.6rem 0.85rem calc(14rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero-content-wrapper {
+    gap: 0.95rem;
+  }
+
+  .hero-role-block,
+  .hero-role-block[style] {
+    margin-bottom: 0.2rem !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .hero-role-block h2 {
+    font-size: clamp(1.4rem, 6.2vw, 1.85rem);
+    letter-spacing: 0.035em;
+    line-height: 1.25;
+  }
+
+  .hero-actions-group {
+    gap: 0.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .apple-glass-btn {
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+    padding: 0.56rem 0.65rem !important;
+    font-size: clamp(0.94rem, 3.8vw, 1.05rem) !important;
+    font-weight: 600 !important;
+    gap: 0.38rem !important;
+    white-space: nowrap !important;
+    justify-content: center !important;
+  }
+
+  .apple-glass-btn svg {
+    width: 0.95rem !important;
+    height: 0.95rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* =========================================================================
+   EXTRA SMALL PHONES ≤ 360px
+   ========================================================================= */
+@media (max-width: 360px) {
+  .hero-heading-wrapper {
+    top: clamp(7.5rem, 24vh, 10rem);
+  }
+
+  .hero-display-word {
+    font-size: clamp(2.65rem, 15.5vw, 3.5rem);
+    letter-spacing: 0em;
+  }
+
+  .hero-role-block,
+  .hero-role-block[style] {
+    margin-bottom: 0.15rem !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .hero-role-block h2 {
+    font-size: clamp(1.2rem, 5.5vw, 1.5rem);
+    letter-spacing: 0.025em;
+    line-height: 1.25;
+  }
+
+  .hero-actions-group {
+    gap: 0.4rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .apple-glass-btn {
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+    padding: 0.5rem 0.45rem !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    gap: 0.28rem !important;
+    white-space: nowrap !important;
+    justify-content: center !important;
+  }
+
+  .apple-glass-btn svg {
+    width: 0.8rem !important;
+    height: 0.8rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .hero-content-section {
+    padding: 0.5rem 0.75rem calc(12rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* =========================================================================
+   SHORT MOBILE / LANDSCAPE OVERRIDE
+   ========================================================================= */
+@media (max-height: 620px) and (max-width: 768px) {
+  .hero-heading-wrapper {
+    top: 2.75rem;
+  }
+
+  .hero-display-word {
+    font-size: clamp(1.8rem, 8.5vh, 2.75rem);
+  }
+
+  .hero-content-section {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 1920px) {
+  .hero-content-wrapper {
+    max-width: 1680px;
+    padding: 0 2rem;
+  }
+
+  .center-image {
+    width: clamp(900px, 60vw, 1550px);
+    max-height: 94vh;
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-ambient-glow-1,
+  .hero-ambient-glow-2,
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .editorial-hero-container * {
+    transition: none !important;
+  }
+}
